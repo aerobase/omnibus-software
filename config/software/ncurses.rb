@@ -15,12 +15,13 @@
 #
 
 name "ncurses"
-default_version "5.9-20150530"
+default_version "6.0-20150810"
 
 dependency "libtool" if aix?
 dependency "patch" if solaris2?
 
 version("5.9") { source md5: "8cb9c412e5f2d96bc6f459aa8c6282a1", url: "http://ftp.gnu.org/gnu/ncurses/ncurses-5.9.tar.gz" }
+version("6.0") { source md5: "ee13d052e1ead260d7c28071f46eefb1", url: "http://ftp.gnu.org/gnu/ncurses/ncurses-6.0.tar.gz" }
 # Removed by Yaniv Marom-Nachumi - Unable to find suitable version.
 # version("5.9-20150530") { source md5: "bb2cbe1d788d3ab0138fc2734e446b43", url: "ftp://invisible-island.net/ncurses/current/ncurses-5.9-20150530.tgz" }
 version("6.0-20150810") { source md5: "78bfcb4634a87b4cda390956586f8f1f", url: "ftp://invisible-island.net/ncurses/current/ncurses-6.0-20150810.tgz" }
