@@ -20,7 +20,7 @@ default_version "1.14"
 dependency "patch" if solaris2?
 
 source url: "http://ftp.gnu.org/pub/gnu/libiconv/libiconv-#{version}.tar.gz",
-       md5: 'a069f8bed9283fd43449028d1cc51d26'
+       md5: 'e34509b1623cec449dfeb73d7ce9c6c6'
 
 relative_path "libiconv-#{version}"
 
