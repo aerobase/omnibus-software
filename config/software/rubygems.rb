@@ -15,7 +15,7 @@
 #
 
 name "rubygems"
-default_version "1.8.24"
+default_version "2.4.8"
 
 if windows?
   dependency "ruby-windows"
@@ -71,6 +71,11 @@ end
 
 version "2.4.5" do
   source md5: "5918319a439c33ac75fbbad7fd60749d", url: tarball_url
+  source.delete(:git)
+end
+
+version "2.4.8" do
+  source md5: "dc77b51449dffe5b31776bff826bf559", url: tarball_url
   source.delete(:git)
 end
 

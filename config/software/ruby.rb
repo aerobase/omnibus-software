@@ -15,7 +15,7 @@
 #
 
 name "ruby"
-default_version "2.0.0-p645"
+default_version "2.2.2"
 
 dependency "zlib"
 dependency "ncurses"
