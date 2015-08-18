@@ -32,5 +32,8 @@ build do
   env = with_standard_compiler_flags
 
   command "mkdir -p #{install_dir}/embedded/apps/wildfly"
-  command "#{install_dir}/embedded/bin/rsync -a --delete ./ #{install_dir}/embedded/apps/wildfly"
+
+  # Wildfly.tar.gz is copied and not extracted due to libHornetQAIO64.so missing dep:
+  # DEPENDS ON: libaio.so.1
+  copy "#{Omnibus::Config.cache_dir}/wildfly-#{version}.tar.gz",      "#{install_dir}/embedded/apps/wildfly/"
 end
