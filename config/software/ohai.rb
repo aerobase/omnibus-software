@@ -16,7 +16,7 @@
 #
 
 name "ohai"
-default_version "master"
+default_version "8.5.1"
 
 source git: "git://github.com/opscode/ohai"
 
