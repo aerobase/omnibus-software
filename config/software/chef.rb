@@ -16,7 +16,7 @@
 name "chef"
 default_version "12.4.1"
 
-source git: "git://github.com/chef/chef"
+source git: "https://github.com/chef/chef"
 
 relative_path "chef"
 

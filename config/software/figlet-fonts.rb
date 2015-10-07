@@ -19,7 +19,7 @@ default_version "master"
 
 dependency "figlet"
 
-source git: "git://github.com/cmatsuoka/figlet-fonts"
+source git: "https://github.com/cmatsuoka/figlet-fonts"
 
 relative_path "figlet-fonts-#{version}"
 

@@ -20,7 +20,7 @@ default_version "1.0.3"
 dependency "autoconf"
 dependency "fcgi"
 
-source git: "git://github.com/gnosek/fcgiwrap"
+source git: "https://github.com/gnosek/fcgiwrap"
 
 relative_path "fcgiwrap"
 
