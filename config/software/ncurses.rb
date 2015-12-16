@@ -21,12 +21,9 @@ dependency "libtool" if aix?
 dependency "patch" if solaris2?
 
 version("5.9") { source md5: "8cb9c412e5f2d96bc6f459aa8c6282a1", url: "http://ftp.gnu.org/gnu/ncurses/ncurses-5.9.tar.gz" }
-version("6.0") { source md5: "ee13d052e1ead260d7c28071f46eefb1", url: "http://ftp.gnu.org/gnu/ncurses/ncurses-6.0.tar.gz" }
-# Removed by Yaniv Marom-Nachumi - Unable to find suitable version.
-# version("5.9-20150530") { source md5: "bb2cbe1d788d3ab0138fc2734e446b43", url: "ftp://invisible-island.net/ncurses/current/ncurses-5.9-20150530.tgz" }
-# version("6.0-20150810") { source md5: "78bfcb4634a87b4cda390956586f8f1f", url: "ftp://invisible-island.net/ncurses/current/ncurses-6.0-20150810.tgz" }
-# yanivn change ncurses to alternative url
-version("6.0-20150810") { source md5: "78bfcb4634a87b4cda390956586f8f1f", url: "http://invisible-mirror.net/archives/ncurses/current/ncurses-6.0-20150810.tgz" }
+version("5.9-20150530") { source md5: "bb2cbe1d788d3ab0138fc2734e446b43", url: "ftp://invisible-island.net/ncurses/current/ncurses-5.9-20150530.tgz" }
+version("6.0-20150613") { source md5: "0c6a0389d004c78f4a995bc61884a563", url: "ftp://invisible-island.net/ncurses/current/ncurses-6.0-20150613.tgz" }
+version("6.0-20150810") { source md5: "78bfcb4634a87b4cda390956586f8f1f", url: "ftp://invisible-island.net/ncurses/current/ncurses-6.0-20150810.tgz" }
 
 relative_path "ncurses-#{version}"
 
@@ -67,6 +64,14 @@ build do
     patch source: "ncurses-5.9-solaris-xopen_source_extended-detection.patch", plevel: 0
   end
 
+  if version == "5.9"
+    # Update config.guess to support platforms made after 2010 (like aarch64)
+    patch source: "config_guess_2015-09-24.patch", plevel: 0
+
+    # Patch to add support for GCC 5, doesn't break previous versions
+    patch source: "ncurses-5.9-gcc-5.patch", plevel: 1
+  end
+
   if mac_os_x? ||
     # Clang became the default compiler in FreeBSD 10+
     (freebsd? && ohai['os_version'].to_i >= 1000024)
@@ -80,8 +85,8 @@ build do
     patch source: "ncurses-clang.patch"
   end
 
-  if version == "5.9" && ppc64le?
-    patch source: "v5.9.ppc64le-configure.patch", plevel: 1
+  if openbsd?
+    patch source: "patch-ncurses_tinfo_lib__baudrate.c", plevel: 0
   end
 
   configure_command = [

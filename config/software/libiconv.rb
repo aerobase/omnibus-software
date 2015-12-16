@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# CAUTION - although its not used, external libraries such as nokogiri may pick up an optional dep on
+# libiconv such that removal of libiconv will break those libraries on upgrade.  With an better story around
+# external gem handling when chef-client is upgraded libconv could be dropped.
 name "libiconv"
 default_version "1.14"
 
@@ -38,8 +41,12 @@ build do
   end
 
   if version == "1.14" && ppc64le?
-    patch source: "v1.14.ppc64le-configure.patch", plevel: 1
     patch source: "v1.14.ppc64le-ldemulation.patch", plevel: 1
+  end
+
+  # Update config.guess to support newer platforms (like aarch64)
+  if version == "1.14"
+    patch source: "config.guess_2015-09-14.patch", plevel: 0
   end
 
   command configure_command, env: env

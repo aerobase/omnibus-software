@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright 2012-2015 Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ dependency "ncurses"
 dependency "libedit"
 dependency "openssl"
 dependency "libyaml"
-dependency "libiconv"
+dependency "libiconv" # Removal will break chef_gem installs of (e.g.) nokogiri on upgrades
 dependency "libffi"
-dependency "gdbm"
 dependency "patch" if solaris2?
 
 version("1.9.3-p484") { source md5: "8ac0dee72fe12d75c8b2d0ef5d0c2968" }
@@ -39,9 +38,11 @@ version("2.1.3")      { source md5: "74a37b9ad90e4ea63c0eed32b9d5b18f" }
 version("2.1.4")      { source md5: "89b2f4a197621346f6724a3c35535b19" }
 version("2.1.5")      { source md5: "df4c1b23f624a50513c7a78cb51a13dc" }
 version("2.1.6")      { source md5: "6e5564364be085c45576787b48eeb75f" }
+version("2.1.7")      { source md5: "2e143b8e19b056df46479ae4412550c9" }
 version("2.2.0")      { source md5: "cd03b28fd0b555970f5c4fd481700852" }
 version("2.2.1")      { source md5: "b49fc67a834e4f77249eb73eecffb1c9" }
 version("2.2.2")      { source md5: "326e99ddc75381c7b50c85f7089f3260" }
+version("2.2.3")      { source md5: "150a5efc5f5d8a8011f30aa2594a7654" }
 
 source url: "http://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)[0]}/ruby-#{version}.tar.gz"
 
@@ -92,12 +93,22 @@ end
 
 build do
   if solaris2? && version.to_f >= 2.1
-    patch source: "ruby-solaris-no-stack-protector.patch", plevel: 1
+    patch source: "ruby-no-stack-protector.patch", plevel: 1
     if ohai['platform_version'].to_f >= 5.11
       patch source: "ruby-solaris-linux-socket-compat.patch", plevel: 1
     end
   elsif solaris2? && version =~ /^1.9/
     patch source: "ruby-sparc-1.9.3-c99.patch", plevel: 1
+  end
+
+  # wrlinux7/ios_xr build boxes from Cisco include libssp and there is no way to
+  # disable ruby from linking against it, but Cisco switches will not have the
+  # library.  Disabling it as we do for Solaris.
+  #
+  # This will be changed to use a chef-sugar helper method once
+  # sethvargo/chef-sugar#116 is available in a release.
+  if ohai['platform'] == 'ios_xr' && version.to_f >= 2.1
+    patch source: "ruby-no-stack-protector.patch", plevel: 1
   end
 
   # AIX needs /opt/freeware/bin only for patch
@@ -112,9 +123,20 @@ build do
   # embedded and non-embedded libs get into a fight (libiconv, openssl, etc)
   # and ruby trying to set LD_LIBRARY_PATH itself gets it wrong.
   if version.to_f >= 2.1
-    patch source: "ruby_aix_2_1_3_mkmf.patch", plevel: 1, env: patch_env
+    patch source: "ruby-2_1_3-no-mkmf.patch", plevel: 1, env: patch_env
     # should intentionally break and fail to apply on 2.2, patch will need to
     # be fixed.
+  end
+
+  # Fix reserve stack segmentation fault when building on RHEL5 or below
+  # Currently only affects 2.1.7 and 2.2.3. This patch taken from the fix
+  # in Ruby trunk and expected to be included in future point releases.
+  # https://redmine.ruby-lang.org/issues/11602
+  if ohai['platform_family'] == 'rhel'  &&
+     ohai['platform_version'].to_f < 6  &&
+     (version == '2.1.7' || version == '2.2.3')
+
+     patch source: 'ruby-fix-reserve-stack-segfault.patch', plevel: 1, env: patch_env
   end
 
   configure_command = ["./configure",
@@ -125,6 +147,7 @@ build do
                        "--with-ext=psych",
                        "--disable-install-doc",
                        "--without-gmp",
+                       "--without-gdbm",
                        "--disable-dtrace"]
 
   case ohai['platform']

@@ -32,8 +32,19 @@ build do
 
   env['INSTALL'] = "/opt/freeware/bin/install" if ohai['platform'] == "aix"
 
-  command "./configure" \
-          " --prefix=#{install_dir}/embedded", env: env
+  configure_command = [
+    "./configure",
+    "--prefix=#{install_dir}/embedded",
+  ]
+
+  # Patch to disable multi-os-directory via configure flag (don't use /lib64)
+  # Works on all platforms, and is compatible on 32bit platforms as well
+  if version == "3.2.1"
+    patch source: "libffi-3.2.1-disable-multi-os-directory.patch", plevel: 1
+    configure_command << "--disable-multi-os-directory"
+  end
+
+  command configure_command.join(" "), env: env
 
   if solaris2?
     # run old make :(

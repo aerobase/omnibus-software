@@ -26,13 +26,12 @@ if windows?
   dependency "ruby-windows-devkit"
   dependency "ruby-windows-devkit-bash"
   dependency "cacerts"
-  dependency "rubygems"
 else
   dependency "ruby"
-  dependency "rubygems"
   dependency "libffi"
 end
 
+dependency "rubygems"
 dependency "bundler"
 dependency "ohai"
 dependency "appbundler"
@@ -57,40 +56,33 @@ build do
     }.each do |target, to|
       copy "#{install_dir}/embedded/mingw/bin/#{to}", "#{install_dir}/bin/#{target}"
     end
+  end
 
-    bundle "install --without server docgen", env: env
+  excluded_groups = %w{server docgen}
+  excluded_groups << 'ruby_prof' if aix?
 
-    # Install components that live inside Chef's git repo. For now this is just
-    # 'chef-config'
-    bundle "exec rake install_components", env: env
+  # install the whole bundle first
+  bundle "install --without #{excluded_groups.join(' ')}", env: env
 
-    gem "build chef-{windows,x86-mingw32}.gemspec", env: env
+  # Install components that live inside Chef's git repo. For now this is just
+  # 'chef-config'
+  bundle "exec rake install_components", env: env
 
-    gem "install chef*mingw32.gem" \
-        " --no-ri --no-rdoc" \
-        " --verbose", env: env
+  gemspec_name = windows? ? 'chef-windows.gemspec' : 'chef.gemspec'
 
-    block "Build Event Log Dll" do
-      Dir.chdir software.project_dir do
-        rake = windows_safe_path("#{install_dir}/embedded/bin/rake")
-        `#{rake} -rdevkit build_eventlog"` if File.exist? "#{software.project_dir}/ext/win32-eventlog"
-      end
-    end
-  else
+  # This step will build native components as needed - the event log dll is
+  # generated as part of this step.  This is why we need devkit.
+  gem "build #{gemspec_name}", env: env
 
-    # install the whole bundle first
-    bundle "install --without server docgen", env: env
+  # Don't use -n #{install_dir}/bin. Appbundler will take care of them later
+  gem "install chef*.gem " \
+      " --no-ri --no-rdoc" \
+      " --verbose", env: env
 
-    # Install components that live inside Chef's git repo. For now this is just
-    # 'chef-config'
-    bundle "exec rake install_components", env: env
-
-    gem "build chef.gemspec", env: env
-
-    # Don't use -n #{install_dir}/bin. Appbundler will take care of them later
-    gem "install chef*.gem " \
-        " --no-ri --no-rdoc", env: env
-
+  # Always deploy the powershell modules in the correct place.
+  if windows?
+    mkdir "#{install_dir}/modules/chef"
+    copy "distro/powershell/chef/*", "#{install_dir}/modules/chef"
   end
 
   auxiliary_gems = {}

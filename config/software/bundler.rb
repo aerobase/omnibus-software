@@ -15,18 +15,21 @@
 #
 
 name "bundler"
-default_version "1.10.5"
+default_version "1.10.6"
 
-if windows?
-  dependency "ruby-windows"
-else
-  dependency "rubygems"
+dependency "rubygems"
+
+version "1.10.7.depsolverfix.0" do
+  source git: "https://github.com/chef/bundler.git"
 end
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  gem "install bundler" \
-      " --version '#{version}'" \
-      " --no-ri --no-rdoc", env: env
+  if version == "1.10.7.depsolverfix.0"
+    gem "build bundler.gemspec"
+    gem "install bundler-#{version}.gem --no-ri --no-rdoc", env: env
+  else
+    gem "install bundler --version '#{version}' --no-ri --no-rdoc", env: env
+  end
 end
