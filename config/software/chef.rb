@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 name "chef"
-default_version "12.5.1-omnibus"
+default_version "12.4.1"
 
 source git: "https://github.com/chef/chef"
 
