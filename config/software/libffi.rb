@@ -30,18 +30,21 @@ relative_path "libffi-#{version}"
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  env['INSTALL'] = "/opt/freeware/bin/install" if ohai['platform'] == "aix"
+  env['INSTALL'] = "/opt/freeware/bin/install" if aix?
 
   configure_command = [
     "./configure",
     "--prefix=#{install_dir}/embedded",
   ]
 
-  # Patch to disable multi-os-directory via configure flag (don't use /lib64)
-  # Works on all platforms, and is compatible on 32bit platforms as well
-  if version == "3.2.1"
-    patch source: "libffi-3.2.1-disable-multi-os-directory.patch", plevel: 1
-    configure_command << "--disable-multi-os-directory"
+  # AIX's old version of patch doesn't like the patch here
+  unless aix?
+    # Patch to disable multi-os-directory via configure flag (don't use /lib64)
+    # Works on all platforms, and is compatible on 32bit platforms as well
+    if version == "3.2.1"
+      patch source: "libffi-3.2.1-disable-multi-os-directory.patch", plevel: 1
+      configure_command << "--disable-multi-os-directory"
+    end
   end
 
   command configure_command.join(" "), env: env

@@ -16,10 +16,13 @@
 
 name "openssl"
 
+fips_enabled = (project.overrides[:fips] && project.overrides[:fips][:enabled]) || false
+
 dependency "zlib"
 dependency "cacerts"
 dependency "makedepend" unless aix?
 dependency "patch" if solaris2?
+dependency "openssl-fips" if fips_enabled
 
 default_version "1.0.1q"
 
@@ -33,8 +36,7 @@ relative_path "openssl-#{version}"
 
 build do
 
-  env = case ohai["platform"]
-        when "freebsd"
+  env = if freebsd?
           freebsd_flags = {
             "CFLAGS" => "-I#{install_dir}/embedded/include",
             "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib",
@@ -47,13 +49,13 @@ build do
             )
           end
           freebsd_flags
-        when "mac_os_x"
+        elsif mac_os_x?
           {
             "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses",
             "LDFLAGS" => "-arch x86_64 -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses",
           }
-        when "aix"
-        {
+        elsif aix?
+          {
             "CC" => "xlc -q64",
             "CXX" => "xlC -q64",
             "LD" => "ld -b64",
@@ -64,8 +66,8 @@ build do
             "AR" => "/usr/bin/ar",
             "ARFLAGS" => "-X64 cru",
             "M4" => "/opt/freeware/bin/m4",
-        }
-        when "solaris2"
+          }
+        elsif solaris2?
           {
             "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
             "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -static-libgcc",
@@ -89,20 +91,27 @@ build do
     "shared",
   ].join(" ")
 
-  configure_command = case ohai["platform"]
-                      when "aix"
+  if fips_enabled
+    common_args = [
+      common_args,
+      "--with-fipsdir=#{install_dir}/embedded",
+      "fips",
+    ].join(" ")
+  end
+
+  configure_command = if aix?
                         ["perl", "./Configure",
                          "aix64-cc",
                          common_args,
                         "-L#{install_dir}/embedded/lib",
                         "-I#{install_dir}/embedded/include",
                         "-Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib"].join(" ")
-                      when "mac_os_x"
+                      elsif mac_os_x?
                         ["./Configure",
                          "darwin64-x86_64-cc",
                          common_args,
                         ].join(" ")
-                      when "smartos"
+                      elsif smartos?
                         ["/bin/bash ./Configure",
                          "solaris64-x86_64-gcc",
                          common_args,
@@ -110,8 +119,8 @@ build do
                          "-I#{install_dir}/embedded/include",
                          "-R#{install_dir}/embedded/lib",
                         "-static-libgcc"].join(" ")
-                      when "solaris2"
-                        if ohai["kernel"]["machine"] =~ /sun/
+                      elsif solaris2?
+                        if sparc?
                           ["/bin/sh ./Configure",
                            "solaris-sparcv9-gcc",
                            common_args,
@@ -131,9 +140,9 @@ build do
                           "-static-libgcc"].join(" ")
                         end
                       else
-                        config = if ohai["os"] == "linux" && ohai["kernel"]["machine"] == "ppc64"
+                        config = if linux? && ppc64?
                                    "./Configure linux-ppc64"
-                                 elsif ohai["os"] == "linux" && ohai["kernel"]["machine"] == "s390x"
+                                 elsif linux? && ohai["kernel"]["machine"] == "s390x"
                                    "./Configure linux64-s390x"
                                  else
                                    "./config"
