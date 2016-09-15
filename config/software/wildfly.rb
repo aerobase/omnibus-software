@@ -14,7 +14,11 @@
 #
 
 name "wildfly"
-default_version "8.2.1.Final"
+default_version "10.1.0.Final"
+
+version "10.1.0.Final" do
+  source md5: "d49d042509d51713038394715b8480ab"
+end
 
 version "8.2.1.Final" do
   source md5: "8e784c2759f3eeab516b3ec2a23a2246"

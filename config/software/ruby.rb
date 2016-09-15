@@ -15,7 +15,6 @@
 #
 
 name "ruby"
-default_version "2.2.2"
 
 license "BSD-2-Clause"
 license_file "BSDL"
@@ -27,7 +26,8 @@ skip_transitive_dependency_licensing true
 #   https://bugs.ruby-lang.org/issues/11869
 # - the current status of 2.3.x is that it downloads but fails to compile.
 # - verify that all ffi libs are available for your version on all platforms.
-default_version "2.1.8"
+# default_version "2.1.8"
+default_version "2.3.1"
 
 fips_enabled = (project.overrides[:fips] && project.overrides[:fips][:enabled]) || false
 
