@@ -17,6 +17,12 @@
 name "pkg-config-lite"
 default_version "0.28-1"
 
+license "GPL-2.0"
+license_file "COPYING"
+skip_transitive_dependency_licensing true
+
+dependency "config_guess"
+
 version "0.28-1" do
   source md5: "61f05feb6bab0a6bbfab4b6e3b2f44b6"
 end
@@ -28,9 +34,7 @@ relative_path "pkg-config-lite-#{version}"
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  if version == "0.28-1"
-    patch source: "pkg-config-lite-0.28-1.config.guess.patch", plevel: 0
-  end
+  update_config_guess
 
   command "./configure" \
           " --prefix=#{install_dir}/embedded" \

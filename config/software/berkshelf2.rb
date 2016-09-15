@@ -14,12 +14,15 @@
 # limitations under the License.
 #
 
-Omnibus.logger.deprecated('berkshelf2') do
-  'Please upgrade to Berkshelf 3. Continued use of Berkshelf 2 will not be supported in the future.'
+Omnibus.logger.deprecated("berkshelf2") do
+  "Please upgrade to Berkshelf 3. Continued use of Berkshelf 2 will not be supported in the future."
 end
 
 name "berkshelf2"
 default_version "2.0.18"
+
+license "Apache-2.0"
+license_file "https://github.com/berkshelf/berkshelf/blob/2-0-stable/LICENSE"
 
 dependency "ruby"
 dependency "rubygems"

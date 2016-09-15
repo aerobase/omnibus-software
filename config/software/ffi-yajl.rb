@@ -18,15 +18,12 @@ name "ffi-yajl"
 default_version "master"
 relative_path "ffi-yajl"
 
-source git: "https://github.com/opscode/ffi-yajl"
+source git: "https://github.com/opscode/ffi-yajl.git"
 
-if windows?
-  dependency "ruby-windows"
-  dependency "ruby-windows-devkit"
-else
-  dependency "libffi"
-  dependency "ruby"
-end
+license "MIT"
+license_file "LICENSE"
+
+dependency "ruby"
 
 dependency "rubygems"
 dependency "libyajl2-gem"
@@ -35,6 +32,10 @@ dependency "bundler"
 build do
   env = with_embedded_path()
 
+  # We should not be installing development dependencies either, but
+  # this upstream bug causes issues between libyajl2-gem and ffi-yajl
+  # (specifically, "corrupted Gemfile.lock" failures)
+  # https://github.com/bundler/bundler/issues/4467
   bundle "install --without development_extras", env: env
   bundle "exec rake gem", env: env
 

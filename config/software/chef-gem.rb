@@ -17,9 +17,13 @@
 name "chef-gem"
 default_version "11.12.2"
 
+license "Apache-2.0"
+license_file "https://github.com/chef/chef/blob/master/LICENSE"
+
 dependency "ruby"
 dependency "rubygems"
 dependency "libffi"
+dependency "rb-readline"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)

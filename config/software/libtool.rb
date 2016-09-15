@@ -17,24 +17,29 @@
 name "libtool"
 default_version "2.4"
 
-version("2.4")   { source md5: "b32b04148ecdd7344abc6fe8bd1bb021" }
-version("2.4.2") { source md5: "d2f3b7d4627e69e13514a40e72a24d50" }
+license "GPL-2.0"
+license_file "COPYING"
+skip_transitive_dependency_licensing true
+
+dependency "config_guess"
+
+# NOTE: 2.4.6 2.4.2 do not compile on solaris2 yet
 version("2.4.6") { source md5: "addf44b646ddb4e3919805aa88fa7c5e" }
+version("2.4.2") { source md5: "d2f3b7d4627e69e13514a40e72a24d50" }
+version("2.4")   { source md5: "b32b04148ecdd7344abc6fe8bd1bb021" }
 
-
-source url: "http://ftp.gnu.org/gnu/libtool/libtool-#{version}.tar.gz"
+source url: "https://ftp.gnu.org/gnu/libtool/libtool-#{version}.tar.gz"
 
 relative_path "libtool-#{version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  # AIX's old version of patch doesn't like the config.guess patch here
-  unless aix?
-    # Update config.guess to support newer platforms (like aarch64)
-    if version == "2.4"
-      patch source: "config.guess_2015-09-14.patch", plevel: 0
-    end
+  update_config_guess
+  update_config_guess(target: "libltdl/config")
+
+  if aix?
+    env["M4"] = "/opt/freeware/bin/m4"
   end
 
   command "./configure" \

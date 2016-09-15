@@ -18,6 +18,9 @@ name "version-manifest"
 description "generates a version manifest file"
 default_version "0.0.1"
 
+license :project_license
+skip_transitive_dependency_licensing true
+
 build do
   block do
     File.open("#{install_dir}/version-manifest.txt", "w") do |f|

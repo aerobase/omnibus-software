@@ -15,13 +15,25 @@
 #
 
 name "curl"
-default_version "7.36.0"
+default_version "7.47.1"
 
 dependency "zlib"
 dependency "openssl"
+dependency "cacerts"
 
-source url: "http://curl.haxx.se/download/curl-#{version}.tar.gz",
-       md5: "643a7030b27449e76413d501d4b8eb57"
+license "MIT"
+license_file "COPYING"
+skip_transitive_dependency_licensing true
+
+version "7.47.1" do
+  source md5: "3f9d1be7bf33ca4b8c8602820525302b"
+end
+
+version "7.36.0" do
+  source md5: "643a7030b27449e76413d501d4b8eb57"
+end
+
+source url: "https://curl.haxx.se/download/curl-#{version}.tar.gz"
 
 relative_path "curl-#{version}"
 
@@ -30,7 +42,7 @@ build do
 
   if freebsd?
     # from freebsd ports - IPv6 Hostcheck patch
-    patch source: "curl-freebsd-hostcheck.patch", plevel: 1
+    patch source: "curl-freebsd-hostcheck.patch", plevel: 1, env: env
   end
 
   delete "#{project_dir}/src/tool_hugehelp.c"
@@ -58,6 +70,7 @@ build do
     "--without-librtmp",
     "--with-ssl=#{install_dir}/embedded",
     "--with-zlib=#{install_dir}/embedded",
+    "--with-ca-bundle=#{install_dir}/embedded/ssl/certs/cacert.pem",
   ]
 
   command configure_command.join(" "), env: env

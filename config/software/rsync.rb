@@ -19,8 +19,26 @@ default_version "3.1.1"
 
 dependency "popt"
 
-source url: "http://rsync.samba.org/ftp/rsync/src/rsync-#{version}.tar.gz",
-       md5: "43bd6676f0b404326eee2d63be3cdcfe"
+license_file "COPYING"
+skip_transitive_dependency_licensing true
+
+version "3.1.2" do
+  source md5: "0f758d7e000c0f7f7d3792610fad70cb"
+  license "GPL-3.0"
+  license_file "COPYING"
+end
+
+version "3.1.1" do
+  source md5: "43bd6676f0b404326eee2d63be3cdcfe"
+  license "GPL-3.0"
+end
+
+version "2.6.9" do
+  source md5: "996d8d8831dbca17910094e56dcb5942"
+  license "GPL-2.0"
+end
+
+source url: "https://rsync.samba.org/ftp/rsync/src/rsync-#{version}.tar.gz"
 
 relative_path "rsync-#{version}"
 

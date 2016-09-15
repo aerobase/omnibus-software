@@ -17,6 +17,11 @@
 name "omnibus-ctl"
 default_version "0.4.2"
 
+license "Apache-2.0"
+license_file "https://github.com/chef/omnibus-ctl/blob/master/LICENSE"
+# Even though omnibus-ctl is a gem, it does not have any dependencies.
+skip_transitive_dependency_licensing true
+
 dependency "ruby"
 dependency "rubygems"
 dependency "bundler"

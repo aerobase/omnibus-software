@@ -15,7 +15,13 @@
 #
 
 name "dep-selector-libgecode"
-default_version "1.0.2"
+default_version "1.2.0"
+
+license "Apache-2.0"
+license_file "https://github.com/chef/dep-selector-libgecode/blob/master/LICENSE.txt"
+# dep-selector-libgecode does not have any dependencies. We only install it from
+# rubygems here.
+skip_transitive_dependency_licensing true
 
 dependency "rubygems"
 
@@ -33,6 +39,7 @@ build do
 
   # Ruby DevKit ships with BSD Tar
   env["PROG_TAR"] = "bsdtar" if windows?
+  env["ARFLAGS"] = "rv #{env["ARFLAGS"]}" if env["ARFLAGS"]
 
   gem "install dep-selector-libgecode" \
       " --version '#{version}'" \

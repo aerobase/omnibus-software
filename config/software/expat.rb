@@ -17,13 +17,20 @@
 name "expat"
 default_version "2.1.0"
 
-relative_path "expat-2.1.0"
+relative_path "expat-#{version}"
+dependency "config_guess"
 
-source url: "http://downloads.sourceforge.net/project/expat/expat/2.1.0/expat-2.1.0.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fexpat%2F&ts=1374730265&use_mirror=iweb",
+license "MIT"
+license_file "COPYING"
+skip_transitive_dependency_licensing true
+
+source url: "http://downloads.sourceforge.net/project/expat/expat/#{version}/expat-#{version}.tar.gz",
        md5: "dd7dab7a5fea97d2a6a43f511449b7cd"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
+
+  update_config_guess(target: "conftools")
 
   command "./configure" \
           " --prefix=#{install_dir}/embedded", env: env

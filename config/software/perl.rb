@@ -15,34 +15,48 @@
 #
 
 name "perl"
+
+license "Artistic-2.0"
+license_file "Artistic"
+skip_transitive_dependency_licensing true
+
 default_version "5.18.1"
 
-source url: "http://www.cpan.org/src/5.0/perl-#{version}.tar.gz",
-       md5: "304cb5bd18e48c44edd6053337d3386d"
-
+version "5.22.1" do
+  source md5: "19295bbb775a3c36123161b9bf4892f1"
+end
+version "5.18.1" do
+  source md5: "304cb5bd18e48c44edd6053337d3386d"
+end
+source url: "http://www.cpan.org/src/5.0/perl-#{version}.tar.gz"
 relative_path "perl-#{version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
   solaris_mapfile_path = File.expand_path(Omnibus::Config.solaris_linker_mapfile, Omnibus::Config.project_root)
-  if solaris2? && File.exist?(solaris_mapfile_path)
-    cc_command = "-Dcc='gcc -static-libgcc -Wl,-M #{solaris_mapfile_path}"
+  if solaris_10?
+    cc_command = "-Dcc='gcc -static-libgcc'"
+    if File.exist?(solaris_mapfile_path)
+      cc_command = "-Dcc='gcc -static-libgcc -Wl,-M #{solaris_mapfile_path}'"
+    end
+  elsif solaris_11?
+    cc_command = "-Dcc='gcc -m64 -static-libgcc'"
   elsif aix?
     cc_command = "-Dcc='/opt/IBM/xlc/13.1.0/bin/cc_r -q64'"
-  elsif freebsd? && ohai['os_version'].to_i >= 1000024
+  elsif freebsd? && ohai["os_version"].to_i >= 1000024
     cc_command = "-Dcc='clang'"
   else
     cc_command = "-Dcc='gcc -static-libgcc'"
   end
 
   configure_command = ["sh Configure",
-                       " -de",
-                       " -Dprefix=#{install_dir}/embedded",
-                       " -Duseshrplib",
-                       " -Dusethreads",
-                       " #{cc_command}",
-                       " -Dnoextensions='DB_File GDBM_File NDBM_File ODBM_File'"]
+                      " -de",
+                      " -Dprefix=#{install_dir}/embedded",
+                      " -Duseshrplib",
+                      " -Dusethreads",
+                      " #{cc_command}",
+                      " -Dnoextensions='DB_File GDBM_File NDBM_File ODBM_File'"]
 
   if aix?
     configure_command << "-Dmake=gmake"

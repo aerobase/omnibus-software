@@ -17,15 +17,20 @@
 name "python"
 default_version "2.7.9"
 
+license "Python-2.0"
+license_file "LICENSE"
+skip_transitive_dependency_licensing true
+
 dependency "ncurses"
 dependency "zlib"
 dependency "openssl"
 dependency "bzip2"
 
-version("2.7.5") { source md5: "b4f01a1d0ba0b46b05c73b2ac909b1df" }
+version("2.7.11") { source md5: "6b6076ec9e93f05dd63e47eb9c15728b" }
 version("2.7.9") { source md5: "5eebcaa0030dc4061156d3429657fb83" }
+version("2.7.5") { source md5: "b4f01a1d0ba0b46b05c73b2ac909b1df" }
 
-source url: "http://python.org/ftp/python/#{version}/Python-#{version}.tgz"
+source url: "https://python.org/ftp/python/#{version}/Python-#{version}.tgz"
 
 relative_path "Python-#{version}"
 
@@ -34,6 +39,10 @@ build do
     "CFLAGS" => "-I#{install_dir}/embedded/include -O3 -g -pipe",
     "LDFLAGS" => "-Wl,-rpath,#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib",
   }
+  if mac_os_x?
+    os_x_release = ohai["platform_version"].match(/([0-9]+\.[0-9]+).*/).captures[0]
+    env["MACOSX_DEPLOYMENT_TARGET"] = os_x_release
+  end
 
   command "./configure" \
           " --prefix=#{install_dir}/embedded" \
@@ -48,4 +57,10 @@ build do
 
   # Remove unused extension which is known to make healthchecks fail on CentOS 6
   delete "#{install_dir}/embedded/lib/python2.7/lib-dynload/_bsddb.*"
+
+  # Remove sqlite3 libraries, if you want to include sqlite, create a new def
+  # in your software project and build it explicitly. This removes the adapter
+  # library from python, which links incorrectly to a system library. Adding
+  # your own sqlite definition will fix this.
+  delete "#{install_dir}/embedded/lib/python2.7/lib-dynload/_sqlite3.*"
 end

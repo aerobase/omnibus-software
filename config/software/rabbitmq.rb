@@ -17,12 +17,18 @@
 name "rabbitmq"
 default_version "2.7.1"
 
+license "MPL-2.0"
+license_file "LICENSE"
+skip_transitive_dependency_licensing true
+
 dependency "erlang"
 
-version("2.7.1") { source md5: "34a5f9fb6f22e6681092443fcc80324f" }
+version("3.6.0") { source md5: "61a3822f3af0aaa30da7230dccb17067" }
 version("3.3.4") { source md5: "61a3822f3af0aaa30da7230dccb17067" }
+version("2.8.7") { source md5: "35e8d78f8d7ae4372db23fe50db82c64" }
+version("2.7.1") { source md5: "34a5f9fb6f22e6681092443fcc80324f" }
 
-source url: "http://www.rabbitmq.com/releases/rabbitmq-server/v#{version}/rabbitmq-server-generic-unix-#{version}.tar.gz"
+source url: "https://www.rabbitmq.com/releases/rabbitmq-server/v#{version}/rabbitmq-server-generic-unix-#{version}.tar.gz"
 
 relative_path "rabbitmq_server-#{version}"
 
@@ -30,7 +36,7 @@ build do
   mkdir "#{install_dir}/embedded/service/rabbitmq"
   sync  "#{project_dir}/", "#{install_dir}/embedded/service/rabbitmq/"
 
-  %w(rabbitmqctl rabbitmq-env rabbitmq-server).each do |bin|
+  %w{rabbitmqctl rabbitmq-env rabbitmq-server}.each do |bin|
     link "#{install_dir}/embedded/service/rabbitmq/sbin/#{bin}", "#{install_dir}/embedded/bin/#{bin}"
   end
 end

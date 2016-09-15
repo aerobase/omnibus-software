@@ -17,20 +17,13 @@
 name "chef-provisioning-fog"
 default_version "master"
 
-source git: "git://github.com/chef/chef-provisioning-fog.git"
+source git: "https://github.com/chef/chef-provisioning-fog.git"
 
-if windows?
-  dependency "ruby-windows"
-  dependency "ruby-windows-devkit"
-else
-  dependency "ruby"
-end
-
+dependency "ruby"
 dependency "rubygems"
 dependency "nokogiri"
 dependency "bundler"
 dependency "chef"
-
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
