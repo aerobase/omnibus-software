@@ -15,7 +15,7 @@
 #
 
 name "gtar"
-default_version "1.30"
+default_version "1.28"
 
 version("1.30") { source md5: "e0c5ed59e4dd33d765d6c90caadd3c73" }
 version("1.29") { source md5: "c57bd3e50e43151442c1995f6236b6e9" }
