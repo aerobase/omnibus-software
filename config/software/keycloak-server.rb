@@ -36,10 +36,11 @@ build do
 
   # Strip KC version from packages.
   link "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay-#{version}", "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay"
-  link "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/modules/system/layers/keycloak/org/keycloak/keycloak-wildfly-server-subsystem/main/keycloak-wildfly-server-subsystem-#{version}.jar", "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/modules/system/layers/keycloak/org/keycloak/keycloak-wildfly-server-subsystem/main/keycloak-wildfly-server-subsystem.jar"
 
-  # Extract default-keycloak-subsys-config.cli to /embedded/apps/keycloak-server/keycloak-overlay/
-  # This can't be done during reconfigure step since JDK is not required in production.
-  command "cd #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/; jar -xvf  #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/modules/system/layers/keycloak/org/keycloak/keycloak-wildfly-server-subsystem/main/keycloak-wildfly-server-subsystem.jar cli/default-keycloak-subsys-config.cli"
-
+  # install default-keycloak-subsys-config.cli to cli directory
+  # update default-keycloak-subsys-config.cli.erb on KC version upgrade
+  # keycloak-overlay-X-X-X.Final/modules/system/layers/keycloak/org/keycloak/keycloak-wildfly-server-subsystem/main/keycloak-wildfly-server-subsystem-3.4.3.Final.jar
+  erb source: "default-keycloak-subsys-config.cli.erb",
+      dest: "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/cli",
+      mode: 0755
 end
