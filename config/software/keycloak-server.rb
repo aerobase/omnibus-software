@@ -41,6 +41,6 @@ build do
   # update default-keycloak-subsys-config.cli.erb on KC version upgrade
   # keycloak-overlay-X-X-X.Final/modules/system/layers/keycloak/org/keycloak/keycloak-wildfly-server-subsystem/main/keycloak-wildfly-server-subsystem-3.4.3.Final.jar
   erb source: "default-keycloak-subsys-config.cli.erb",
-      dest: "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/cli",
+      dest: "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/cli/default-keycloak-subsys-config.cli",
       mode: 0755
 end
