@@ -34,8 +34,6 @@ version "8.1.0.Final" do
 end
 
 source url: "http://download.jboss.org/wildfly/#{version}/wildfly-#{version}.tar.gz"
-# Resolve wildfly broken tag.gz 30-11-2016
-# source url: "http://ups.c-b4.com/wildfly/#{version}/wildfly-#{version}.tar.gz"
 
 relative_path "wildfly-#{version}"
 
@@ -43,8 +41,5 @@ build do
   env = with_standard_compiler_flags
 
   command "mkdir -p #{install_dir}/embedded/apps/wildfly"
-
-  # Wildfly.tar.gz is copied and not extracted due to libHornetQAIO64.so missing dep:
-  # DEPENDS ON: libaio.so.1
-  copy "#{Omnibus::Config.cache_dir}/wildfly-#{version}.tar.gz",      "#{install_dir}/embedded/apps/wildfly/"
+  sync "./", "#{install_dir}/embedded/cookbooks/aerobase/files/default/wildfly"
 end
