@@ -37,6 +37,8 @@ build do
   # Strip KC version from packages.
   link "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay-#{version}", "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay"
 
+  command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/cli/"
+
   # install default-keycloak-subsys-config.cli to cli directory
   # update default-keycloak-subsys-config.cli.erb on KC version upgrade
   # keycloak-overlay-X-X-X.Final/modules/system/layers/keycloak/org/keycloak/keycloak-wildfly-server-subsystem/main/keycloak-wildfly-server-subsystem-3.4.3.Final.jar
