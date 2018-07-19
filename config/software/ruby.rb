@@ -29,7 +29,7 @@ dependency "openssl"
 dependency "libffi"
 dependency "libyaml"
 
-version("2.5.1")      { source sha256: "886ac5eed41e3b5fc699be837b0087a6a5a3d10f464087560d2d21b3e71b754d" }
+version("2.5.1")      { source sha256: "dac81822325b79c3ba9532b048c2123357d3310b2b40024202f360251d9829b1" }
 version("2.5.0")      { source sha256: "46e6f3630f1888eb653b15fa811d77b5b1df6fd7a3af436b343cfe4f4503f2ab" }
 
 version("2.4.4")      { source sha256: "254f1c1a79e4cc814d1e7320bc5bdd995dc57e08727d30a767664619a9c8ae5a" }
@@ -57,7 +57,7 @@ version("2.2.2")      { source md5: "326e99ddc75381c7b50c85f7089f3260" }
 version("2.2.1")      { source md5: "b49fc67a834e4f77249eb73eecffb1c9" }
 version("2.2.0")      { source md5: "cd03b28fd0b555970f5c4fd481700852" }
 
-source url: "https://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)[0]}/ruby-#{version}.tar.xz"
+source url: "https://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)[0]}/ruby-#{version}.tar.gz"
 
 relative_path "ruby-#{version}"
 
