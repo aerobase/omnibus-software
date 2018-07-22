@@ -31,11 +31,8 @@ end
 source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-overlay-#{version}.tar.gz"
 
 build do
-  command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay-#{version}"
-  sync "#{project_dir}/", "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay-#{version}"
-
-  # Strip KC version from packages.
-  link "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay-#{version}", "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay"
+  command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay"
+  sync "#{project_dir}/", "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay"
 
   command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/cli/"
 
