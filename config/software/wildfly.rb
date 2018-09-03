@@ -21,21 +21,12 @@ version "11.0.0.Final" do
   source md5: "c68224ce162371a1aa7890f847cebca5"
 end
 
-version "10.1.0.Final" do
-  source md5: "d49d042509d51713038394715b8480ab"
-end
-
-version "8.2.1.Final" do
-  source md5: "8e784c2759f3eeab516b3ec2a23a2246"
-end
-
-version "8.1.0.Final" do
-  source md5: "46caf74201245742a99f8a3eaac7e647"
-end
-
 source url: "http://download.jboss.org/wildfly/#{version}/wildfly-#{version}.tar.gz"
 
 relative_path "wildfly-#{version}"
+
+whitelist_file /libaio\.so\.1/
+whitelist_file /\.*libartemis-native-64\.so/
 
 build do
   env = with_standard_compiler_flags
