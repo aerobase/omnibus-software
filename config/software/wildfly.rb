@@ -35,6 +35,7 @@ relative_path "wildfly-#{version}"
 
 whitelist_file /libaio\.so\.1/
 whitelist_file /\.*libartemis-native-64\.so/
+whitelist_file /\.*libartemis-native-32\.so/
 
 build do
   env = with_standard_compiler_flags
