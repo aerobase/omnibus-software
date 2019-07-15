@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 name "chef"
-default_version "v14.3.37"
+default_version "v14.13.11"
 
 license "Apache-2.0"
 license_file "LICENSE"
