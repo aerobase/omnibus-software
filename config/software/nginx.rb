@@ -34,6 +34,18 @@ version("1.21.4") { source sha256: "d1f72f474e71bcaaf465dcc7e6f7b6a4705e4b1ed95c
 version("1.20.1") { source sha256: "e462e11533d5c30baa05df7652160ff5979591d291736cfa5edb9fd2edb48c49" }
 version("1.19.9") { source sha256: "2e35dff06a9826e8aca940e9e8be46b7e4b12c19a48d55bfc2dc28fc9cc7d841" }
 version("1.19.8") { source sha256: "308919b1a1359315a8066578472f998f14cb32af8de605a3743acca834348b05" }
+version("1.16.1") { source sha256: "f11c2a6dd1d3515736f0324857957db2de98be862461b5a542a3ac6188dbe32b" }
+version("1.14.2") { source sha256: "002d9f6154e331886a2dd4e6065863c9c1cf8291ae97a1255308572c02be9797" }
+version("1.14.0") { source sha256: "5d15becbf69aba1fe33f8d416d97edd95ea8919ea9ac519eff9bafebb6022cb5" }
+version("1.12.2") { source sha256: "305f379da1d5fb5aefa79e45c829852ca6983c7cd2a79328f8e084a324cf0416" }
+version("1.10.2") { source md5: "e8f5f4beed041e63eb97f9f4f55f3085" }
+version("1.9.1") { source md5: "fc054d51effa7c80a2e143bc4e2ae6a7" }
+version("1.8.1") { source md5: "2e91695074dbdfbf1bcec0ada9fda462" }
+version("1.8.0") { source md5: "3ca4a37931e9fa301964b8ce889da8cb" }
+version("1.6.3") { source md5: "ea813aee2c344c2f5b66cdb24a472738" }
+version("1.4.7") { source md5: "aee151d298dcbfeb88b3f7dd3e7a4d17" }
+version("1.4.4") { source md5: "5dfaba1cbeae9087f3949860a02caa9f" }
+>>>>>>> Upgrade to nginx 16.1
 
 relative_path "nginx-#{version}"
 
