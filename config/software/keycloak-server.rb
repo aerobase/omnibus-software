@@ -15,10 +15,14 @@
 #
 
 name "keycloak-server"
-default_version "4.8.3.Final"
+default_version "7.0.1.Final"
 skip_transitive_dependency_licensing true
 
 dependency "wildfly"
+
+version "7.0.1.Final" do
+  source md5: "effadaeb7c52659ae48da51593fbc59a"
+end
 
 version "4.8.3.Final" do
   source md5: "48b3bba325550ce57eff74d43ef867fd"
