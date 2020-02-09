@@ -60,6 +60,7 @@ build do
   excluded_groups << "ruby_shadow" if aix?
   excluded_groups << "ed25519" if solaris2?
 
+  # install the whole bundle first
   bundle "install --without #{excluded_groups.join(" ")}", env: env
 
   # use the rake install task to build/install chef-config/chef-utils
