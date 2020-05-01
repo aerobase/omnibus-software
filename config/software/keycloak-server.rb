@@ -15,56 +15,22 @@
 #
 
 name "keycloak-server"
-default_version "9.0.2"
+default_version "9.0.3"
 skip_transitive_dependency_licensing true
 
-dependency "wildfly"
-
-version "9.0.2" do
-  source md5: "a2121270ea797800407107a3567f1ef0"
+version "9.0.3" do
+  source md5: "0b3c1968155f76c0540a0de8996b51e8"
 end
 
-version "7.0.1" do
-  source md5: "effadaeb7c52659ae48da51593fbc59a"
-end
+source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-#{version}.tar.gz"
 
-version "4.8.3.Final" do
-  source md5: "48b3bba325550ce57eff74d43ef867fd"
-end
-
-version "4.8.1.Final" do
-  source md5: "05b3236e9e0c4293b4e496e77d63ec28"
-end
-
-version "4.7.0.Final" do
-  source md5: "588035466fcd65d8593d4a57d73ff796"
-end
-
-version "4.6.0.Final" do
-  source md5: "5e12374673b2b61c7ae96691bae2c0cc"
-end
-
-version "4.5.0.Final" do
-  source md5: "d6ab41cc8a147ef9e2ceb75e613df854"
-end
-
-version "4.3.0.Final" do
-  source md5: "49cd673631f15d55f7250f103b8b250f"
-end
-
-version "3.4.3.Final" do
-  source md5: "0c6c83827297208d39127342f44017ce"
-end
-
-version "3.4.2.Final" do
-  source md5: "3878e44a310cb90782e330a445d45907"
-end
-
-source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-overlay-#{version}.tar.gz"
+whitelist_file /libaio\.so\.1/
+whitelist_file /\.*libartemis-native-64\.so/
+whitelist_file /\.*libartemis-native-32\.so/
 
 build do
-  command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay"
-  sync "#{project_dir}/", "#{install_dir}/embedded/apps/keycloak-server/keycloak-overlay"
+  command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak"
+  sync "#{project_dir}/keycloak-#{version}/", "#{install_dir}/embedded/apps/keycloak-server/keycloak"
 
-  command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak-overlay/cli/"
+  command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak/cli/"
 end
