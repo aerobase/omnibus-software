@@ -71,6 +71,13 @@ source url: "https://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)
 internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.tar.gz",
                 authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
 
+# In order to pass notarization we need to sign any binaries and libraries included in the package.
+# This makes sure we include and bins and libs that are brought in by gems.
+semver = Gem::Version.create(version).segments
+ruby_mmv = "#{semver[0..1].join(".")}.0"
+ruby_dir = "#{install_dir}/embedded/lib/ruby/#{ruby_mmv}"
+gem_dir = "#{install_dir}/embedded/lib/ruby/gems/#{ruby_mmv}"
+
 relative_path "ruby-#{version}"
 
 env = with_standard_compiler_flags(with_embedded_path)
@@ -286,8 +293,8 @@ build do
       mingw = ENV["MSYSTEM"].downcase
       # Starting omnibus-toolchain version 1.1.115 we do not build msys2 as a part of omnibus-toolchain anymore, but pre install it in image
       # so here we set the path to default install of msys2 first and default to OMNIBUS_TOOLCHAIN_INSTALL_DIR for backward compatibility
-      msys_path = ENV["MSYS2_INSTALL_DIR"] ? "#{ENV["MSYS2_INSTALL_DIR"]}" : "#{ENV["OMNIBUS_TOOLCHAIN_INSTALL_DIR"]}/embedded/bin"
-      #msys_path = ENV["OMNIBUS_TOOLCHAIN_INSTALL_DIR"] ? "#{ENV["OMNIBUS_TOOLCHAIN_INSTALL_DIR"]}/embedded/bin" : "C:/Ruby25-x64/msys64"
+      #msys_path = ENV["MSYS2_INSTALL_DIR"] ? "#{ENV["MSYS2_INSTALL_DIR"]}" : "#{ENV["OMNIBUS_TOOLCHAIN_INSTALL_DIR"]}/embedded/bin"
+      msys_path = ENV["OMNIBUS_TOOLCHAIN_INSTALL_DIR"] ? "#{ENV["OMNIBUS_TOOLCHAIN_INSTALL_DIR"]}/embedded/bin" : "C:/Ruby25-x64/msys64"
       windows_path = "#{msys_path}/#{mingw}/bin/#{dll}.dll"
       if File.exist?(windows_path)
         copy windows_path, "#{install_dir}/embedded/bin/#{dll}.dll"
