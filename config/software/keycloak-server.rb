@@ -15,11 +15,11 @@
 #
 
 name "keycloak-server"
-default_version "11.0.2"
+default_version "11.0.3"
 skip_transitive_dependency_licensing true
 
-version "11.0.2" do
-  source md5: "1d653521de31ef07b99efa7a55e568cb"
+version "11.0.3" do
+  source md5: "13dae55fe2d1cd505869328b1ffe4183"
 end
 
 source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-#{version}.tar.gz"
