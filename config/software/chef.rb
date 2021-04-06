@@ -16,7 +16,7 @@
 # expeditor/ignore: no version pinning
 
 name "chef"
-default_version "v14.13.11"
+default_version "master"
 
 license "Apache-2.0"
 license_file "LICENSE"
