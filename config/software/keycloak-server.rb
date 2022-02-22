@@ -15,14 +15,14 @@
 #
 
 name "keycloak-server"
-default_version "11.0.3"
+default_version "17.0.0"
 skip_transitive_dependency_licensing true
 
 version "11.0.3" do
   source md5: "13dae55fe2d1cd505869328b1ffe4183"
 end
 
-source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-#{version}.tar.gz"
+source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-legacy-#{version}.tar.gz"
 
 whitelist_file /libaio\.so\.1/
 whitelist_file /\.*libartemis-native-64\.so/
