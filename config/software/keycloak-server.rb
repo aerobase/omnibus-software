@@ -18,8 +18,8 @@ name "keycloak-server"
 default_version "17.0.0"
 skip_transitive_dependency_licensing true
 
-version "11.0.3" do
-  source md5: "13dae55fe2d1cd505869328b1ffe4183"
+version "17.0.0" do
+  source md5: "0a020379838c897d8eea389ba1fb1b60"
 end
 
 source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-legacy-#{version}.tar.gz"
