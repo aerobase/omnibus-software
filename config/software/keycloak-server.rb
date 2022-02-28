@@ -22,7 +22,7 @@ version "17.0.0" do
   source md5: "0a020379838c897d8eea389ba1fb1b60"
 end
 
-source url: "https://downloads.jboss.org/keycloak/#{version}/keycloak-legacy-#{version}.tar.gz"
+source url: "https://github.com/keycloak/keycloak/releases/download/#{version}/keycloak-legacy-#{version}.tar.gz"
 
 whitelist_file /libaio\.so\.1/
 whitelist_file /\.*libartemis-native-64\.so/
