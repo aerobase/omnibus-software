@@ -15,8 +15,12 @@
 #
 
 name "keycloak-server"
-default_version "17.0.0"
+default_version "17.0.1"
 skip_transitive_dependency_licensing true
+
+version "17.0.1" do
+  source md5: "6a03999fc5c16eddc362fc36262a8b8b"
+end
 
 version "17.0.0" do
   source md5: "0a020379838c897d8eea389ba1fb1b60"
