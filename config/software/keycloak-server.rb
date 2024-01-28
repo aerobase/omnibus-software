@@ -15,22 +15,15 @@
 #
 
 name "keycloak-server"
-default_version "17.0.1"
+default_version "23.0.4"
 skip_transitive_dependency_licensing true
 
-version "17.0.1" do
-  source md5: "6a03999fc5c16eddc362fc36262a8b8b"
+version "23.0.4" do
+  source md5: "e4e60a370714807dce27e3fef466196c"
 end
 
-version "17.0.0" do
-  source md5: "0a020379838c897d8eea389ba1fb1b60"
-end
+source url: "https://github.com/keycloak/keycloak/releases/download/#{version}/keycloak-#{version}.tar.gz"
 
-source url: "https://github.com/keycloak/keycloak/releases/download/#{version}/keycloak-legacy-#{version}.tar.gz"
-
-whitelist_file /libaio\.so\.1/
-whitelist_file /\.*libartemis-native-64\.so/
-whitelist_file /\.*libartemis-native-32\.so/
 
 build do
   command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak"
