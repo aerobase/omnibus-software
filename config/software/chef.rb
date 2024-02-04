@@ -74,8 +74,10 @@ build do
 
   # NOTE: Chef18 is packaged and built with ruby31 whereas previous versions of Chef are ONLY built
   # with ruby31,the packaged versions differ. So we use Chef's own version to determine the windows gemspec.
+  ### Aerobase change - Project build_version is 22.x so this condition is relevant only for chef standalone build
   gemspec_name = if windows?
-                   project.build_version.partition(".")[0].to_i < 18 ? "chef-universal-mingw32.gemspec" : "chef-universal-mingw-ucrt.gemspec"
+                  "chef-universal-mingw32.gemspec"
+                   # project.build_version.partition(".")[0].to_i < 18 ? "chef-universal-mingw32.gemspec" : "chef-universal-mingw-ucrt.gemspec"
                  else
                    "chef.gemspec"
                  end
