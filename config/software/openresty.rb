@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2016 Chef Software, Inc.
+# Copyright:: Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,57 +18,34 @@ name "openresty"
 license "BSD-2-Clause"
 license_file "README.markdown"
 skip_transitive_dependency_licensing true
-default_version "1.11.2.5"
+default_version "1.21.4.1"
 
 dependency "pcre"
 dependency "openssl"
 dependency "zlib"
 dependency "lua" if ppc64? || ppc64le? || s390x?
 
-source_package_name = "openresty"
+# versions_list: https://openresty.org/download/ filter=*.tar.gz
+version("1.21.4.2")    { source sha256: "5b1eded25c1d4ed76c0336dfae50bd94d187af9c85ead244135dd5ae363b2e2a" }
+version("1.21.4.1")    { source sha256: "0c5093b64f7821e85065c99e5d4e6cc31820cfd7f37b9a0dec84209d87a2af99" }
+version("1.21.4.1rc1") { source sha256: "1cb216bc57a253149cb5c4b815bfe00e1c0713e7355774bbc26cf306d2ff632f" }
+version("1.19.9.1")    { source sha256: "576ff4e546e3301ce474deef9345522b7ef3a9d172600c62057f182f3a68c1f6" }
+version("1.19.3.2")    { source sha256: "ce40e764990fbbeb782e496eb63e214bf19b6f301a453d13f70c4f363d1e5bb9" }
+version("1.19.3.1")    { source sha256: "f36fcd9c51f4f9eb8aaab8c7f9e21018d5ce97694315b19cacd6ccf53ab03d5d" }
+version("1.17.8.2")    { source sha256: "2f321ab11cb228117c840168f37094ee97f8f0316eac413766305409c7e023a0" }
+version("1.15.8.1")    { source sha256: "89a1238ca177692d6903c0adbea5bdf2a0b82c383662a73c03ebf5ef9f570842" }
+version("1.13.6.2")    { source sha256: "946e1958273032db43833982e2cec0766154a9b5cb8e67868944113208ff2942" }
+version("1.11.2.5")    { source sha256: "f8cc203e8c0fcd69676f65506a3417097fc445f57820aa8e92d7888d8ad657b9" }
 
-# Versions above 1.11.2.2 require SSE4.2 CPU support
-version("1.19.3.1") { source sha256: "f36fcd9c51f4f9eb8aaab8c7f9e21018d5ce97694315b19cacd6ccf53ab03d5d" }
-version("1.17.8.2") { source sha256: "2f321ab11cb228117c840168f37094ee97f8f0316eac413766305409c7e023a0" }
-version("1.15.8.1") { source sha256: "89a1238ca177692d6903c0adbea5bdf2a0b82c383662a73c03ebf5ef9f570842" }
-version("1.13.6.2") { source sha256: "946e1958273032db43833982e2cec0766154a9b5cb8e67868944113208ff2942" }
-version("1.11.2.5") { source sha256: "f8cc203e8c0fcd69676f65506a3417097fc445f57820aa8e92d7888d8ad657b9" }
-version("1.11.2.2") { source sha256: "7f9ca62cfa1e4aedf29df9169aed0395fd1b90de254139996e554367db4d5a01" }
-version("1.11.2.1") { source md5: "f26d152f40c5263b383a5b7c826a6c7e" }
-version("1.9.7.3") { source md5: "33579b96a8c22bedee97eadfc99d9564" }
+source url: "https://openresty.org/download/openresty-#{version}.tar.gz"
+internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.tar.gz",
+                authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
 
-version("1.9.7.2") do
-  source md5: "78a263de11ff43c95e847f208cce0899"
-  source_package_name = "ngx_openresty"
-end
-version("1.9.3.1") do
-  source md5: "cde1f7127f6ba413ee257003e49d6d0a"
-  source_package_name = "ngx_openresty"
-end
-version("1.7.10.2") do
-  source md5: "bca1744196acfb9e986f1fdbee92641e"
-  source_package_name = "ngx_openresty"
-end
-version("1.7.10.1") do
-  source md5: "1093b89459922634a818e05f80c1e18a"
-  source_package_name = "ngx_openresty"
-end
-version("1.4.3.6") do
-  source md5: "5e5359ae3f1b8db4046b358d84fabbc8"
-  source_package_name = "ngx_openresty"
-end
-
-source url: "https://openresty.org/download/#{source_package_name}-#{version}.tar.gz"
-
-relative_path "#{source_package_name}-#{version}"
+relative_path "openresty-#{version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
   env["PATH"] += "#{env["PATH"]}:/usr/sbin:/sbin"
-
-  if version == "1.7.10.1" && (ppc64? || ppc64le? || s390x?)
-    patch source: "v1.7.10.1.ppc64le-configure.patch", plevel: 1
-  end
 
   configure = [
     "./configure",
@@ -90,6 +67,7 @@ build do
     "--without-mail_smtp_module",
     "--without-mail_imap_module",
     "--without-mail_pop3_module",
+    "--with-http_v2_module",
     "--with-ipv6",
     # AIO support define in Openresty cookbook. Requires Kernel >= 2.6.22
     # Ubuntu 10.04 reports: 2.6.32-38-server #83-Ubuntu SMP
@@ -97,11 +75,6 @@ build do
     # '--with-file-aio',
     # '--with-libatomic'
   ]
-
-  # HTTP/2 was introduced with nginx 1.9.5
-  if version.satisfies?(">= 1.9.5")
-    configure << "--with-http_v2_module"
-  end
 
   # Currently LuaJIT doesn't support POWER correctly so use Lua51 there instead
   if ppc64? || ppc64le? || s390x?

@@ -15,55 +15,44 @@
 #
 
 name "curl"
-default_version "7.76.0"
+default_version "8.4.0"
 
 dependency "zlib"
 dependency "openssl"
 dependency "cacerts"
+dependency "libnghttp2" if version.satisfies?(">= 8.0")
 
 license "MIT"
 license_file "COPYING"
 skip_transitive_dependency_licensing true
 
 # version_list: url=https://curl.se/download/ filter=*.tar.gz
-version("7.76.0") { source sha256: "3b4378156ba09e224008e81dcce854b7ce4d182b1f9cfb97fe5ed9e9c18c6bd3" }
-version("7.75.0") { source sha256: "4d51346fe621624c3e4b9f86a8fd6f122a143820e17889f59c18f245d2d8e7a6" }
-version("7.74.0") { source sha256: "e56b3921eeb7a2951959c02db0912b5fcd5fdba5aca071da819e1accf338bbd7" }
-version("7.73.0") { source sha256: "ba98332752257b47b9dea6d8c0ad25ec1745c20424f1dd3ff2c99ab59e97cf91" }
-version("7.71.1") { source sha256: "59ef1f73070de67b87032c72ee6037cedae71dcb1d7ef2d7f59487704aec069d" }
-version("7.68.0") { source sha256: "1dd7604e418b0b9a9077f62f763f6684c1b092a7bc17e3f354b8ad5c964d7358" }
-version("7.65.1") { source sha256: "821aeb78421375f70e55381c9ad2474bf279fc454b791b7e95fc83562951c690" }
-version("7.65.0") { source sha256: "2a65f4f858a1fa949c79f926ddc2204c2be353ccbad014e95cd322d4a87d82ad" }
+version("8.4.0")  { source sha256: "816e41809c043ff285e8c0f06a75a1fa250211bbfb2dc0a037eeef39f1a9e427" }
+version("7.85.0") { source sha256: "78a06f918bd5fde3c4573ef4f9806f56372b32ec1829c9ec474799eeee641c27" }
+version("7.84.0") { source sha256: "3c6893d38d054d4e378267166858698899e9d87258e8ff1419d020c395384535" }
+version("7.83.1") { source sha256: "93fb2cd4b880656b4e8589c912a9fd092750166d555166370247f09d18f5d0c0" }
+version("7.82.0") { source sha256: "910cc5fe279dc36e2cca534172c94364cf3fcf7d6494ba56e6c61a390881ddce" }
+version("7.81.0") { source sha256: "ac8e1087711084548d788ef18b9b732c8de887457b81f616fc681d1044b32f98" }
+version("7.80.0") { source sha256: "dab997c9b08cb4a636a03f2f7f985eaba33279c1c52692430018fae4a4878dc7" }
+version("7.79.1") { source sha256: "370b11201349816287fb0ccc995e420277fbfcaf76206e309b3f60f0eda090c2" }
 
 source url: "https://curl.haxx.se/download/curl-#{version}.tar.gz"
+internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.tar.gz",
+                authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
 
 relative_path "curl-#{version}"
 
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  if freebsd?
+  if freebsd? && version.satisfies?("< 7.82.0")
     # from freebsd ports - IPv6 Hostcheck patch
     patch source: "curl-freebsd-hostcheck.patch", plevel: 1, env: env
   end
 
   delete "#{project_dir}/src/tool_hugehelp.c"
 
-  if aix?
-    # alpn doesn't appear to work on AIX when connecting to certain sites, most
-    # importantly for us https://www.github.com Since git uses libcurl under
-    # the covers, this functionality breaks the handshake on connection, giving
-    # a cryptic error. This patch essentially forces disabling of ALPN on AIX,
-    # which is not really what we want in a http/2 world, but we're not there
-    # yet.
-    patch_env = env.dup
-    patch_env["PATH"] = "/opt/freeware/bin:#{env["PATH"]}" if aix?
-    patch source: "curl-aix-disable-alpn.patch", plevel: 0, env: patch_env
-
-    # otherwise gawk will die during ./configure with variations on the theme of:
-    # "/opt/omnibus-toolchain/embedded/lib/libiconv.a(shr4.o) could not be loaded"
-    env["LIBPATH"] = "/usr/lib:/lib"
-  elsif solaris2?
+  if solaris2?
     # Without /usr/gnu/bin first in PATH the libtool fails during make on Solaris
     env["PATH"] = "/usr/gnu/bin:#{env["PATH"]}"
   end
@@ -84,6 +73,7 @@ build do
     "--disable-gopher",
     "--disable-dependency-tracking",
     "--enable-ipv6",
+    "--without-brotli",
     "--without-libidn2",
     "--without-gnutls",
     "--without-librtmp",

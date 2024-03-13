@@ -1,3 +1,3 @@
 module OmnibusSoftware
-  VERSION = "2.2.0".freeze
+  VERSION = File.read(File.join(__dir__, "../../VERSION")).strip.freeze
 end

@@ -16,7 +16,7 @@
 # expeditor/ignore: no version pinning
 
 name "chef"
-default_version "master"
+default_version "main"
 
 license "Apache-2.0"
 license_file "LICENSE"
@@ -55,7 +55,7 @@ dependency "libarchive" # for archive resource
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  # The --without groups here MUST match groups in https://github.com/chef/chef/blob/master/Gemfile
+  # The --without groups here MUST match groups in https://github.com/chef/chef/blob/main/Gemfile
   excluded_groups = %w{docgen chefstyle}
   excluded_groups << "ruby_prof" if aix?
   excluded_groups << "ruby_shadow" if aix?
@@ -64,14 +64,23 @@ build do
   # these are gems which are not shipped but which must be installed in the testers
   bundle_excludes = excluded_groups + %w{development test}
 
-  bundle "install --without #{bundle_excludes.join(" ")}", env: env
+  bundle "config set --local without #{bundle_excludes.join(" ")}", env: env
+  bundle "install", env: env
 
   ruby "post-bundle-install.rb", env: env
 
   # use the rake install task to build/install chef-config/chef-utils
   command "rake install:local", env: env
 
-  gemspec_name = windows? ? "chef-universal-mingw32.gemspec" : "chef.gemspec"
+  # NOTE: Chef18 is packaged and built with ruby31 whereas previous versions of Chef are ONLY built
+  # with ruby31,the packaged versions differ. So we use Chef's own version to determine the windows gemspec.
+  ### Aerobase change - Project build_version is 22.x so this condition is relevant only for chef standalone build
+  gemspec_name = if windows?
+                  "chef-universal-mingw32.gemspec"
+                   # project.build_version.partition(".")[0].to_i < 18 ? "chef-universal-mingw32.gemspec" : "chef-universal-mingw-ucrt.gemspec"
+                 else
+                   "chef.gemspec"
+                 end
 
   # This step will build native components as needed - the event log dll is
   # generated as part of this step.  This is why we need devkit.

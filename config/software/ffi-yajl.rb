@@ -16,7 +16,7 @@
 # expeditor/ignore: deprecated 2021-04
 
 name "ffi-yajl"
-default_version "master"
+default_version "main"
 relative_path "ffi-yajl"
 
 source git: "https://github.com/chef/ffi-yajl.git"
@@ -35,7 +35,8 @@ build do
   # this upstream bug causes issues between libyajl2-gem and ffi-yajl
   # (specifically, "corrupted Gemfile.lock" failures)
   # https://github.com/bundler/bundler/issues/4467
-  bundle "install --without development_extras", env: env
+  bundle "config set --local without development_extras", env: env
+  bundle "install", env: env
   bundle "exec rake gem", env: env
 
   delete "pkg/*java*"

@@ -16,7 +16,7 @@
 # expeditor/ignore: deprecated 2021-04
 
 name "libyajl2-gem"
-default_version "master"
+default_version "main"
 relative_path "libyajl2-gem"
 
 source git: "https://github.com/chef/libyajl2-gem.git"
@@ -32,7 +32,8 @@ build do
   command "git submodule init", env: env
   command "git submodule update", env: env
 
-  bundle "install --without development_extras", env: env
+  bundle "config set --local without development_extras", env: env
+  bundle "install", env: env
   bundle "exec rake prep", env: env
   bundle "exec rake gem", env: env
 

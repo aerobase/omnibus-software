@@ -5,6 +5,10 @@
 slack:
   notify_channel: chef-found-notify
 
+# This publish is triggered by the `built_in:publish_rubygems` artifact_action.
+rubygems:
+  - omnibus-software
+
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
   delete_branch_on_merge: true
@@ -12,6 +16,12 @@ pipelines:
   - verify:
       description: Pull Request validation tests
       public: true
+  - software_upload:
+      description: Uploads omnibus-software defined in scripts/internal_sources.yml to artifactory
+      definition: .expeditor/software_upload.pipeline.yml
+
+rubygems:
+  - omnibus-software
 
 subscriptions:
   - workload: pull_request_merged:{{github_repo}}:{{release_branch}}:*
@@ -24,3 +34,11 @@ subscriptions:
       - bash:.expeditor/push_git_tag.sh:
           only_if: bash:.expeditor/determine_version.sh
           post_commit: true
+      - trigger_pipeline:software_upload
+      - built_in:build_gem:
+          only_if: "bash:.expeditor/push_git_tag.sh"
+
+  - workload: project_promoted:{{agent_id}}:*
+    actions:
+      - built_in:rollover_changelog
+      - built_in:publish_rubygems

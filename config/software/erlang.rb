@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2014 Chef Software, Inc.
+# Copyright:: Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 #
 
 name "erlang"
-default_version "23.3.3"
+default_version "25.2"
 
 license "Apache-2.0"
 license_file "LICENSE.txt"
@@ -26,42 +26,35 @@ dependency "openssl"
 dependency "ncurses"
 dependency "config_guess"
 
-#
-# OTP only puts minor version updates in the downloads page. E.g. 18.3 is present, but 18.3.4.9 wouldn't be
-# It's nice to be able to have those updates, so we're moving to using the github releases instead
-# However for backcompat leave the prior stuff alone.
-if version.satisfies?("<= 18.3") || version.satisfies?("=20.0")
-  source url: "http://www.erlang.org/download/otp_src_#{version}.tar.gz"
-  relative_path "otp_src_#{version}"
-else
-  source url: "https://github.com/erlang/otp/archive/OTP-#{version}.tar.gz"
-  relative_path "otp-OTP-#{version}"
-end
+# grab from github so we can get patch releases if we need to
+source url: "https://github.com/erlang/otp/archive/OTP-#{version}.tar.gz"
+internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.tar.gz",
+                authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
+relative_path "otp-OTP-#{version}"
 
 # versions_list: https://github.com/erlang/otp/tags filter=*.tar.gz
-version("23.3.3")    { source sha256: "839d74e71a457295d95b8674f1848a5d7d9c4c274a041ef8026d035da88858ae" }
-version("23.3.2")    { source sha256: "02443dd42023d0eb73f73dc05f4d3ded7bc4ab59d348041a37a045ba1581b48b" }
-version("22.2")      { source sha256: "232c37a502c7e491a9cbf86acb7af64fbc1a793fcbcbd0093cb029cf1c3830a7" }
-version("22.1.8")    { source sha256: "7302be70cee2c33689bf2c2a3e7cfee597415d0fb3e4e71bd3e86bd1eff9cfdc" }
-version("21.3.8.11") { source sha256: "aab77124285820608cd7a90f6b882e42bb5739283e10a8593d7f5bce9b30b16a" }
-version("21.1")      { source sha256: "7212f895ae317fa7a086fa2946070de5b910df5d41263e357d44b0f1f410af0f" }
-version("20.3.8.9")  { source sha256: "897dd8b66c901bfbce09ed64e0245256aca9e6e9bdf78c36954b9b7117192519" }
-version("20.0")      { source sha256: "22710927ad2e48a0964997bf5becb24abb1f4fed86f5f05af22a9e1df636b787" }
-version("19.3.6.11") { source sha256: "c857ea6d2c901bfb633d9ceeb5e05332475357f185dd5112b7b6e4db80072827" }
-version("18.3.4.9")  { source sha256: "25ef8ba3824cb726c4830abf32c2a2967925b1e33a8e8851dba596e933e2689a" }
-version("18.3")      { source sha256: "fdab8129a1cb935db09f1832e3a7d511a4aeb2b9bb3602ca6a7ccb9730d5c9c3" }
-version("18.2")      { source sha256: "43de28ac307d2ecf26b6134647f8de1cdf7b419517514a7d5c2af04284fb3fd0" }
-version("18.1")      { source sha256: "e4a147228a6b7fa60dce05c8adfb3cbc254d97cf6e45456d93d93adbde8b0f11" }
+version("25.2") { source sha256: "d33a988f39e534aff67799c5b9635612858459c9d8890772546d71ea38de897a" }
+version("25.1.2")    { source sha256: "b9ae7becd3499aeac9f94f9379e2b1b4dced4855454fe7f200a6e3e1cf4fbc53" }
+version("25.0.4")    { source sha256: "05878cb51a64b33c86836b12a21903075c300409b609ad5e941ddb0feb8c2120" }
+version("25.0.2")    { source sha256: "f78764c6fd504f7b264c47e469c0fcb86a01c92344dc9d625dfd42f6c3ed8224" }
+version("25.0")      { source sha256: "5988e3bca208486494446e885ca2149fe487ee115cbc3770535fd22a795af5d2" }
+version("24.3.4.7")  { source sha256: "80c08cf1c181a124dd805bb1d91ff5c1996bd8a27b3f4d008b1ababf48d9947e" }
+version("24.3.4")    { source sha256: "e59bedbb871af52244ca5284fd0a572d52128abd4decf4347fe2aef047b65c58" }
+version("24.3.3")    { source sha256: "a5f4d83426fd3dc2f08c0c823ae29bcf72b69008a2baee66d27ad614ec7ab607" }
+version("24.3.2")    { source sha256: "cdc9cf788d28a492eb6b24881fbd06a0a5c785dc374ad415b3be1db96326583c" }
+version("18.3")      { source sha256: "a6d08eb7df06e749ccaf3049b33ceae617a3c466c6a640ee8d248c2372d48f4e" }
 
 build do
-  if version.satisfies?(">= 18.3")
-    # Don't listen on 127.0.0.1/::1 implicitly whenever ERL_EPMD_ADDRESS is given
+  # Don't listen on 127.0.0.1/::1 implicitly whenever ERL_EPMD_ADDRESS is given
+  if version.satisfies?("<= 24.3.3")
     patch source: "epmd-require-explicitly-adding-loopback-address.patch", plevel: 1
+  else
+    patch source: "updated-epmd-require-explicitly-adding-loopback-address.patch", plevel: 1
   end
 
   env = with_standard_compiler_flags(with_embedded_path).merge(
     # WARNING!
-    "CFLAGS"  => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/erlang/include",
+    "CFLAGS"  => "-L#{install_dir}/embedded/lib -O3 -I#{install_dir}/embedded/erlang/include",
     "LDFLAGS" => "-Wl,-rpath #{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/erlang/include"
   )
   env.delete("CPPFLAGS")
@@ -73,7 +66,6 @@ build do
 
   update_config_guess(target: "erts/autoconf")
   update_config_guess(target: "lib/common_test/priv/auxdir")
-  update_config_guess(target: "lib/erl_interface/src/auxdir")
   update_config_guess(target: "lib/wx/autoconf")
 
   if version.satisfies?(">= 19.0")

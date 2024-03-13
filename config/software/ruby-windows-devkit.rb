@@ -23,18 +23,18 @@ skip_transitive_dependency_licensing true
 
 if windows_arch_i386?
   version "4.5.2-20111229-1559" do
-    source url: "https://dl.bintray.com/oneclick/rubyinstaller/DevKit-tdm-32-#{version}-sfx.exe",
-           md5: "4bf8f2dd1d582c8733a67027583e19a6"
+    source url: "https://github.com/oneclick/rubyinstaller/releases/download/DevKit-tdm-32-4.5.2/DevKit-tdm-32-#{version}-sfx.exe",
+           sha256: "6c3af5487dafda56808baf76edd262b2020b1b25ab86aabf972629f4a6a54491"
   end
 
   version "4.7.2-20130224" do
-    source url: "https://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-32-#{version}-1151-sfx.exe",
-           md5: "9383f12958aafc425923e322460a84de"
+    source url: "https://github.com/oneclick/rubyinstaller/releases/download/devkit-4.7.2/DevKit-mingw64-32-#{version}-1151-sfx.exe",
+           sha256: "61a06b5da06dd94343e591163ac0d43c544e9cd4df770f01275645b268b44dc7"
   end
 else
   version "4.7.2-20130224" do
-    source url: "https://dl.bintray.com/oneclick/rubyinstaller/DevKit-mingw64-64-#{version}-1432-sfx.exe",
-           md5: "ce99d873c1acc8bffc639bd4e764b849"
+    source url: "https://github.com/oneclick/rubyinstaller/releases/download/devkit-4.7.2/DevKit-mingw64-64-#{version}-1432-sfx.exe",
+           sha256: "2ada04c7234199126c0f34f6ea7163a8f8dccb1e15814af175a189f6ac48b8ac"
   end
 end
 build do
@@ -62,8 +62,12 @@ build do
     "liblzma-1.dll" => "liblzma-1.dll",
     "libbz2-2.dll" => "libbz2-2.dll",
     "libz-1.dll" => "libz-1.dll",
+    "libssp-0.dll" => "libssp-0.dll",
   }.each do |target, to|
     copy "#{install_dir}/embedded/mingw/bin/#{to}", "#{install_dir}/bin/#{target}"
+
+    copy "#{install_dir}/embedded/bin/x64-msvcrt-ruby300.dll", "#{install_dir}/bin/x64-msvcrt-ruby300.dll"
+    copy "#{install_dir}/embedded/mingw/include/ansidecl.h", "#{install_dir}/embedded/mingw/x86_64-w64-mingw32/include/ansidecl.h"
   end
 
   # IIS 8.5 Server STIG finding V-76717 warns on this file because it ends with

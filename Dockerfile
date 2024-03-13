@@ -1,15 +1,21 @@
-FROM chefes/releng-base
+FROM ubuntu:18.04
 
-ARG SOFTWARE
-ARG VERSION
-
-COPY ./ /omnibus-software
-COPY ./test /test
-
-WORKDIR /test
+RUN apt-get update -y -q && apt-get install -y \
+      autoconf \
+      binutils \
+      binutils-doc \
+      bison \
+      build-essential \
+      curl \
+      devscripts \
+      dpkg-dev \
+      fakeroot \
+      flex \
+      gettext \
+      gnupg \
+      ncurses-dev \
+      ncurses-dev \
+      wget \
+      zlib1g-dev
 
 RUN curl -L https://omnitruck.chef.io/install.sh | bash -s -- -P omnibus-toolchain
-
-RUN . /opt/omnibus-toolchain/bin/load-omnibus-toolchain \
-    && DEBUG=1 bundle install --without development \
-    && bundle exec omnibus build test

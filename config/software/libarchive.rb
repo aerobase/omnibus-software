@@ -18,26 +18,24 @@
 # https://github.com/berkshelf/api.berkshelf.com
 
 name "libarchive"
-default_version "3.5.1"
+default_version "3.6.2"
 
 license "BSD-2-Clause"
 license_file "COPYING"
 skip_transitive_dependency_licensing true
 
 # versions_list: https://github.com/libarchive/libarchive/releases/ filter=*.tar.gz
+
+version("3.6.2") { source sha256: "ba6d02f15ba04aba9c23fd5f236bb234eab9d5209e95d1c4df85c44d5f19b9b3" }
+version("3.6.1") { source sha256: "c676146577d989189940f1959d9e3980d28513d74eedfbc6b7f15ea45fe54ee2" }
+version("3.6.0") { source sha256: "a36613695ffa2905fdedc997b6df04a3006ccfd71d747a339b78aa8412c3d852" }
+version("3.5.2") { source sha256: "5f245bd5176bc5f67428eb0aa497e09979264a153a074d35416521a5b8e86189" }
 version("3.5.1") { source sha256: "9015d109ec00bb9ae1a384b172bf2fc1dff41e2c66e5a9eeddf933af9db37f5a" }
 version("3.5.0") { source sha256: "fc4bc301188376adc18780d35602454cc8df6396e1b040fbcbb0d4c0469faf54" }
-version("3.4.3") { source sha256: "ee1e749213c108cb60d53147f18c31a73d6717d7e3d2481c157e1b34c881ea39" }
-version("3.4.2") { source sha256: "b60d58d12632ecf1e8fad7316dc82c6b9738a35625746b47ecdcaf4aed176176" }
-version("3.4.1") { source sha256: "fcf87f3ad8db2e4f74f32526dee62dd1fb9894782b0a503a89c9d7a70a235191" }
-version("3.4.0") { source sha256: "8643d50ed40c759f5412a3af4e353cffbce4fdf3b5cf321cb72cacf06b2d825e" }
 
-# 3.5.1 no longer includes the "v" in the path
-if version.satisfies?(">= 3.5.1")
-  source url: "https://github.com/libarchive/libarchive/releases/download/#{version}/libarchive-#{version}.tar.gz"
-else
-  source url: "https://github.com/libarchive/libarchive/releases/download/v#{version}/libarchive-#{version}.tar.gz"
-end
+source url: "https://github.com/libarchive/libarchive/releases/download/v#{version}/libarchive-#{version}.tar.gz"
+internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.tar.gz",
+                authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
 
 relative_path "libarchive-#{version}"
 

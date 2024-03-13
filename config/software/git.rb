@@ -15,7 +15,7 @@
 #
 
 name "git"
-default_version "2.31.1"
+default_version "2.39.0"
 
 license "LGPL-2.1"
 license_file "LGPL-2.1"
@@ -32,14 +32,22 @@ relative_path "git-#{version}"
 
 # version_list: url=https://www.kernel.org/pub/software/scm/git/ filter=*.tar.gz
 
-version("2.31.1") { source sha256: "46d37c229e9d786510e0c53b60065704ce92d5aedc16f2c5111e3ed35093bfa7" }
-version("2.30.2") { source sha256: "9ddea08fc7c38f1823a54a014ae2e9ecd45e1b4a06e919025f4c41f2c6a8061b" }
-version("2.29.3") { source sha256: "dfaa7608c67fa84483c09fdbea1367848d56b050ed200e541a9829701d45ccad" }
-version("2.29.2") { source sha256: "869a121e1d75e4c28213df03d204156a17f02fce2dc77be9795b327830f54195" }
-version("2.28.0") { source sha256: "f914c60a874d466c1e18467c864a910dd4ea22281ba6d4d58077cb0c3f115170" }
-version("2.26.2") { source sha256: "e1c17777528f55696815ef33587b1d20f5eec246669f3b839d15dbfffad9c121" }
+version("2.39.3") { source sha256: "2f9aa93c548941cc5aff641cedc24add15b912ad8c9b36ff5a41b1a9dcad783e" }
+version("2.39.0") { source sha256: "d929fe67cef7ac3ca709d2b56a9920f17112d5a524bf8112af37ec045a7a5109" }
+version("2.37.3") { source sha256: "181f65587155ea48c682f63135678ec53055adf1532428752912d356e46b64a8" }
+version("2.37.2") { source sha256: "4c428908e3a2dca4174df6ef49acc995a4fdb1b45205a2c79794487a33bc06e5" }
+version("2.37.1") { source sha256: "7dded96a52e7996ce90dd74a187aec175737f680dc063f3f33c8932cf5c8d809" }
+version("2.37.0") { source sha256: "fc3ffe6c65c1f7c681a1ce6bb91703866e432c762731d4b57c566d696f6d62c3" }
+version("2.36.1") { source sha256: "37d936fd17c81aa9ddd3dba4e56e88a45fa534ad0ba946454e8ce818760c6a2c" }
+version("2.36.0") { source sha256: "9785f8c99daea037b8443d2f7397ac6aafbf8d5ff21fbfe2e5c0d443d126e211" }
+version("2.35.3") { source sha256: "cad708072d5c0b390c71651f5edb44143f00b357766973470bf9adebc0944c03" }
+
+# we need to keep 2.24.1 until we can remove the version pin in omnibus-toolchain Solaris builds
+version("2.24.1") { source sha256: "ad5334956301c86841eb1e5b1bb20884a6bad89a10a6762c958220c7cf64da02" }
 
 source url: "https://www.kernel.org/pub/software/scm/git/git-#{version}.tar.gz"
+internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.tar.gz",
+                authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
 
 # git builds git-core as binaries into a special directory. We need to include
 # that directory in bin_dirs so omnibus can sign them during macOS deep signing.
@@ -109,6 +117,7 @@ build do
   env["CFLAGS"] = "-I. #{env["CFLAGS"]}"
   env["CPPFLAGS"] = "-I. #{env["CPPFLAGS"]}"
   env["CXXFLAGS"] = "-I. #{env["CXXFLAGS"]}"
+  env["CFLAGS"] = "-std=c99 #{env["CFLAGS"]}"
 
   erb source: "config.mak.erb",
       dest: "#{project_dir}/config.mak",
@@ -125,6 +134,7 @@ build do
                config_hash: config_hash,
              }
 
+  #
   # NOTE - If you run ./configure the environment variables set above will not be
   # used and only the command line args will be used. The issue with this is you
   # cannot specify everything on the command line that you can with the env vars.
