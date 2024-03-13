@@ -15,11 +15,15 @@
 #
 
 name "keycloak-server"
-default_version "23.0.6"
+default_version "23.0.7"
 skip_transitive_dependency_licensing true
 
 version "23.0.6" do
   source md5: "e4448370729753d82a480c8c58073786"
+end
+
+version "23.0.7" do
+  source md5: "6ac7d0f3b06ec7e95601cc8d3fc095fb"
 end
 
 source url: "https://github.com/keycloak/keycloak/releases/download/#{version}/keycloak-#{version}.tar.gz"
