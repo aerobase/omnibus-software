@@ -15,6 +15,7 @@
 #
 
 name "keycloak-server"
+
 default_version "23.0.7"
 skip_transitive_dependency_licensing true
 
@@ -27,7 +28,6 @@ version "23.0.7" do
 end
 
 source url: "https://github.com/keycloak/keycloak/releases/download/#{version}/keycloak-#{version}.tar.gz"
-
 
 build do
   command "mkdir -p #{install_dir}/embedded/apps/keycloak-server/keycloak"

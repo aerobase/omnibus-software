@@ -65,6 +65,8 @@ build do
     command "git submodule update", env: env
     ruby "setup.rb  --no-document", env: env
   else
+    # Aerobase patch to resolve build on windows
+    command "curl -L https://raw.githubusercontent.com/rubygems/rubygems/master/lib/rubygems/ssl_certs/rubygems.org/GlobalSignRootCA_R3.pem --output #{install_dir}/embedded/lib/ruby/2.7.0/rubygems/ssl_certs/rubygems.org/GlobalSignRootCA_R3.pem"
     # Installing direct from rubygems:
     # If there is no version, this will get latest.
     gem "update --no-document --system #{version}", env: env

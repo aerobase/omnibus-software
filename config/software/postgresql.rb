@@ -15,6 +15,7 @@
 #
 
 name "postgresql"
+
 default_version "15.1"
 
 license "PostgreSQL"
