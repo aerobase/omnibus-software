@@ -46,7 +46,6 @@ version("1.8.0") { source md5: "3ca4a37931e9fa301964b8ce889da8cb" }
 version("1.6.3") { source md5: "ea813aee2c344c2f5b66cdb24a472738" }
 version("1.4.7") { source md5: "aee151d298dcbfeb88b3f7dd3e7a4d17" }
 version("1.4.4") { source md5: "5dfaba1cbeae9087f3949860a02caa9f" }
->>>>>>> Upgrade to nginx 16.1
 
 relative_path "nginx-#{version}"
 
