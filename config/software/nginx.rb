@@ -16,7 +16,7 @@
 ## expeditor/ignore: deprecated 2022 03
 
 name "nginx"
-default_version "1.21.4"
+default_version "1.29.8"
 
 dependency "pcre"
 dependency "openssl"
@@ -30,6 +30,7 @@ internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.
                 authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
 
 # versions_list: https://nginx.org/download/ filter=*.tar.gz
+version("1.29.8") { source sha256: "7f1b985dace8fe706dfc288b83927c928f0ae60bcb7507c2d4e0025eca7280c3" }
 version("1.21.4") { source sha256: "d1f72f474e71bcaaf465dcc7e6f7b6a4705e4b1ed95c581af31df697551f3bfe" }
 version("1.20.1") { source sha256: "e462e11533d5c30baa05df7652160ff5979591d291736cfa5edb9fd2edb48c49" }
 version("1.19.9") { source sha256: "2e35dff06a9826e8aca940e9e8be46b7e4b12c19a48d55bfc2dc28fc9cc7d841" }
