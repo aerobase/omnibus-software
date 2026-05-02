@@ -34,12 +34,6 @@ relative_path "admin/runit-#{version}/src"
 build do
   env = with_standard_compiler_flags(with_embedded_path)
 
-  # GCC 14+ (CentOS Stream 10, Fedora 40+) treats implicit function declarations
-  # and incompatible pointer types as errors. Runit's old C code triggers both.
-  # Downgrade to warnings so the legacy source compiles and configure detects
-  # POSIX features (waitpid, sigaction, sigprocmask) correctly.
-  env["CFLAGS"] << " -Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types"
-
   runit_patch = File.expand_path("../patches/runit/runit-2.1.2-modern-setgroups.patch", __dir__)
 
   # Newer glibc toolchains require the setgroups prototype and reject raw int pointers.

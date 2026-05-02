@@ -1,6 +1,6 @@
---- a/chkshsgr.c
-+++ b/chkshsgr.c
-@@ -1,11 +1,13 @@
+--- a/chkshsgr.c	2014-08-10 21:22:35
++++ b/chkshsgr.c	2026-05-02 15:36:01
+@@ -1,12 +1,14 @@
  /* Public domain. */
  
 +#include <sys/types.h>
@@ -16,9 +16,9 @@
 +  if (getgroups(1, (gid_t *)x) == 0) if (setgroups(1, (gid_t *)x) == -1) _exit(1);
    _exit(0);
  }
---- a/tryshsgr.c
-+++ b/tryshsgr.c
-@@ -1,15 +1,19 @@
+--- a/tryshsgr.c	2014-08-10 21:22:35
++++ b/tryshsgr.c	2026-05-02 15:36:03
+@@ -1,16 +1,20 @@
  /* Public domain. */
  
 +#include <sys/types.h>
@@ -28,12 +28,14 @@
  int main()
  {
    short x[4];
-  
+- 
++
    x[0] = x[1] = 1;
 -  if (getgroups(1,x) == 0) if (setgroups(1,x) == -1) _exit(1);
-+  if (getgroups(1, (gid_t *)x) == 0) if (setgroups(1, (gid_t *)x) == -1) _exit(1);
-  
+- 
 -  if (getgroups(1,x) == -1) _exit(1);
++  if (getgroups(1, (gid_t *)x) == 0) if (setgroups(1, (gid_t *)x) == -1) _exit(1);
++
 +  if (getgroups(1, (gid_t *)x) == -1) _exit(1);
    if (x[1] != 1) _exit(1);
    x[1] = 2;
@@ -42,9 +44,9 @@
    if (x[1] != 2) _exit(1);
    _exit(0);
  }
---- a/prot.c
-+++ b/prot.c
-@@ -1,15 +1,21 @@
+--- a/prot.c	2014-08-10 21:22:35
++++ b/prot.c	2026-05-02 15:36:05
+@@ -1,5 +1,9 @@
  /* Public domain. */
  
 +#include <sys/types.h>
@@ -54,8 +56,7 @@
  #include "hasshsgr.h"
  #include "prot.h"
  
- int prot_gid(int gid)
- {
+@@ -8,9 +12,11 @@
  #ifdef HASSHORTSETGROUPS
    short x[2];
    x[0] = gid; x[1] = 73; /* catch errors */
@@ -69,8 +70,43 @@
  #endif
    return setgid(gid); /* _should_ be redundant, but on some systems it isn't */
  }
---- a/chpst.c
-+++ b/chpst.c
+--- a/pathexec_run.c	2014-08-10 21:22:35
++++ b/pathexec_run.c	2026-05-02 15:36:23
+@@ -1,5 +1,6 @@
+ /* Public domain. */
+ 
++#include <unistd.h>
+ #include "error.h"
+ #include "stralloc.h"
+ #include "str.h"
+@@ -15,7 +16,7 @@
+   int savederrno;
+ 
+   if (file[str_chr(file,'/')]) {
+-    execve(file,argv,envp);
++    execve(file,(char *const *)argv,(char *const *)envp);
+     return;
+   }
+ 
+@@ -32,7 +33,7 @@
+     if (!stralloc_cats(&tmp,file)) return;
+     if (!stralloc_0(&tmp)) return;
+ 
+-    execve(tmp.s,argv,envp);
++    execve(tmp.s,(char *const *)argv,(char *const *)envp);
+     if (errno != error_noent) {
+       savederrno = errno;
+       if ((errno != error_acces) && (errno != error_perm) && (errno != error_isdir)) return;
+--- a/conf-cc	2014-08-10 21:22:35
++++ b/conf-cc	2026-05-02 15:36:24
+@@ -1,4 +1,4 @@
+-gcc -O2 -Wall
++gcc -O2 -Wall -Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types
+ 
+ gcc -O2 -Wimplicit -Wunused -Wcomment -Wchar-subscripts -Wuninitialized -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings
+ 
+--- a/chpst.c	2014-08-10 21:22:35
++++ b/chpst.c	2026-05-02 15:36:32
 @@ -1,5 +1,6 @@
  #include <sys/types.h>
  #include <time.h>
