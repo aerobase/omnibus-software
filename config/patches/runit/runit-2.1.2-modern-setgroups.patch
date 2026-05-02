@@ -1,0 +1,80 @@
+--- a/chkshsgr.c
++++ b/chkshsgr.c
+@@ -1,11 +1,13 @@
+ /* Public domain. */
+ 
++#include <sys/types.h>
+ #include <unistd.h>
++#include <grp.h>
+ 
+ int main()
+ {
+   short x[4];
+ 
+   x[0] = x[1] = 0;
+-  if (getgroups(1,x) == 0) if (setgroups(1,x) == -1) _exit(1);
++  if (getgroups(1, (gid_t *)x) == 0) if (setgroups(1, (gid_t *)x) == -1) _exit(1);
+   _exit(0);
+ }
+--- a/tryshsgr.c
++++ b/tryshsgr.c
+@@ -1,15 +1,19 @@
+ /* Public domain. */
+ 
++#include <sys/types.h>
++#include <unistd.h>
++#include <grp.h>
++
+ int main()
+ {
+   short x[4];
+  
+   x[0] = x[1] = 1;
+-  if (getgroups(1,x) == 0) if (setgroups(1,x) == -1) _exit(1);
++  if (getgroups(1, (gid_t *)x) == 0) if (setgroups(1, (gid_t *)x) == -1) _exit(1);
+  
+-  if (getgroups(1,x) == -1) _exit(1);
++  if (getgroups(1, (gid_t *)x) == -1) _exit(1);
+   if (x[1] != 1) _exit(1);
+   x[1] = 2;
+-  if (getgroups(1,x) == -1) _exit(1);
++  if (getgroups(1, (gid_t *)x) == -1) _exit(1);
+   if (x[1] != 2) _exit(1);
+   _exit(0);
+ }
+--- a/prot.c
++++ b/prot.c
+@@ -1,15 +1,21 @@
+ /* Public domain. */
+ 
++#include <sys/types.h>
++#include <unistd.h>
++#include <grp.h>
++
+ #include "hasshsgr.h"
+ #include "prot.h"
+ 
+ int prot_gid(int gid)
+ {
+ #ifdef HASSHORTSETGROUPS
+   short x[2];
+   x[0] = gid; x[1] = 73; /* catch errors */
+-  if (setgroups(1,x) == -1) return -1;
++  if (setgroups(1, (gid_t *)x) == -1) return -1;
+ #else
+-  if (setgroups(1,&gid) == -1) return -1;
++  gid_t x[1];
++  x[0] = (gid_t)gid;
++  if (setgroups(1, x) == -1) return -1;
+ #endif
+   return setgid(gid); /* _should_ be redundant, but on some systems it isn't */
+ }
+--- a/chpst.c
++++ b/chpst.c
+@@ -1,5 +1,6 @@
+ #include <sys/types.h>
+ #include <time.h>
++#include <grp.h>
+ #include <sys/time.h>
+ #include <sys/resource.h>
+ #include <unistd.h>
