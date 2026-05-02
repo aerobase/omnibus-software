@@ -62,6 +62,7 @@ build do
 
   command "./configure" \
           " --prefix=#{install_dir}/embedded" \
+          " --without-icu" \
           " --with-libedit-preferred" \
           " --with-openssl" \
           " --with-ossp-uuid" \
