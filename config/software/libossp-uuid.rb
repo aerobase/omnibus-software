@@ -28,7 +28,9 @@ dependency "config_guess"
 version("1.6.2") { source sha256: "11a615225baa5f8bb686824423f50e4427acd3f70d394765bdff32801f0fd5b0" }
 
 # ftp on ftp.ossp.org is unavaiable so we must use another mirror site.
-source url: "https://www.mirrorservice.org/sites/ftp.ossp.org/pkg/lib/uuid/uuid-#{version}.tar.gz"
+source url: (ENV["AEROBASE_HTTP_MIRROR_FALLBACKS"] == "1" ?
+             "http://www.mirrorservice.org/sites/ftp.ossp.org/pkg/lib/uuid/uuid-#{version}.tar.gz" :
+             "https://www.mirrorservice.org/sites/ftp.ossp.org/pkg/lib/uuid/uuid-#{version}.tar.gz")
 internal_source url: "#{ENV["ARTIFACTORY_REPO_URL"]}/#{name}/#{name}-#{version}.tar.gz",
                 authorization: "X-JFrog-Art-Api:#{ENV["ARTIFACTORY_TOKEN"]}"
 
