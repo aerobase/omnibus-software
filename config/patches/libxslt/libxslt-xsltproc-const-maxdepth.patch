@@ -1,0 +1,23 @@
+--- a/xsltproc/xsltproc.c
++++ b/xsltproc/xsltproc.c
+@@ -568,6 +568,6 @@
+                    (!strcmp(argv[i], "--version"))) {
+             printf("Using libxml %s, libxslt %s and libexslt %s\n",
+-                   xmlParserVersion, xsltEngineVersion, exsltLibraryVersion);
++                   LIBXML_DOTTED_VERSION, xsltEngineVersion, exsltLibraryVersion);
+             printf
+     ("xsltproc was compiled against libxml %d, libxslt %d and libexslt %d\n",
+                  LIBXML_VERSION, LIBXSLT_VERSION, LIBEXSLT_VERSION);
+@@ -731,8 +731,10 @@
+             }
+
+             if (sscanf(argv[i], "%d", &value) == 1) {
+-                if (value > 0)
+-                    xmlParserMaxDepth = value;
++#if LIBXML_VERSION < 21100
++                if (value > 0)
++                    xmlParserMaxDepth = value;
++#endif
+             }
+         } else if ((!strcmp(argv[i], "-huge")) ||
+                    (!strcmp(argv[i], "--huge"))) {

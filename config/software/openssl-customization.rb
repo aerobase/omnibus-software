@@ -35,7 +35,7 @@ build do
     def get_sanitized_rbconfig(config)
       ruby = windows_safe_path("#{install_dir}/embedded/bin/ruby")
 
-      config_dir = Bundler.with_clean_env do
+      config_dir = Bundler.with_unbundled_env do
         command_output = `#{ruby} -rrbconfig -e "puts RbConfig::CONFIG['#{config}']"`.strip
         windows_safe_path(command_output)
       end

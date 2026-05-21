@@ -52,6 +52,7 @@ build do
 
   if windows?
     patch source: "libxslt-windows-relocate.patch", env: env
+    patch source: "libxslt-xsltproc-const-maxdepth.patch", env: env
   end
 
   # the libxslt configure script iterates directories specified in
@@ -64,6 +65,7 @@ build do
     "--without-crypto",
     "--without-profiler",
     "--without-debugger",
+    "--without-deprecated-declarations",
   ]
 
   configure(*configure_commands, env: env)
