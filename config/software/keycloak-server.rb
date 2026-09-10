@@ -16,7 +16,7 @@
 
 name "keycloak-server"
 
-default_version "26.6.4"
+default_version "26.7.3"
 skip_transitive_dependency_licensing true
 
 version "23.0.6" do
@@ -45,6 +45,10 @@ end
 
 version "26.6.4" do
   source md5: "4dcaa06331010ef9fd9221b989f52084"
+end
+
+version "26.7.3" do
+  source md5: "03ec7f67f7adbe04b609935542e23354"
 end
 
 source url: "https://github.com/keycloak/keycloak/releases/download/#{version}/keycloak-#{version}.tar.gz"
